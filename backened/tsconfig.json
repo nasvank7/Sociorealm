@@ -1,0 +1,16 @@
+{
+    "compilerOptions":{
+        "module":"NodeNext",
+        "moduleResolution": "NodeNext",
+        "baseUrl": "server",
+        "outDir": "dist",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "lib": ["ES2021", "DOM"]
+    },
+    "include": [
+    "server/**/*"
+    ]
+}
