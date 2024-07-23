@@ -16,13 +16,13 @@ interface Post {
   likes: string;
   image: string;
   saved: string;
-  createdAt:string
+  createdAt: string;
 }
 interface UserProfile {
   _id: string;
   username: string;
   isFollowing: boolean;
-  image: string; 
+  image: string;
 }
 const FriendUSerProfile = () => {
   const defaultIcon = "https://cdn-icons-png.flaticon.com/512/1077/1077114.png";
@@ -30,8 +30,8 @@ const FriendUSerProfile = () => {
   const { username } = useParams();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
-  const[follower,setFollower]=useState<any>([])
-  const[following,setFollowing]=useState<any>([])
+  const [follower, setFollower] = useState<any>([]);
+  const [following, setFollowing] = useState<any>([]);
   useEffect(() => {
     axiosInstance.get(`/friendProfile/${username}`).then((res) => {
       console.log(res, "response is here for friend profile");
@@ -44,40 +44,39 @@ const FriendUSerProfile = () => {
       setPosts(res.data.data);
     });
   }, [username]);
-// ...
+  // ...
 
-useEffect(() => {
-  if (userDetails && userDetails._id) {
-    const data = {
-      params: {
-        userId: user?._id,
-      },
-    };
-    axiosInstance.get("/follow", data).then((res) => {
-      console.log(res, "follow response");
-      console.log(res.data.users, "the data of user");
-      console.log(userDetails._id, "logged-in user");
+  useEffect(() => {
+    if (userDetails && userDetails._id) {
+      const data = {
+        params: {
+          userId: user?._id,
+        },
+      };
+      axiosInstance.get("/follow", data).then((res) => {
+        console.log(res, "follow response");
+        console.log(res.data.users, "the data of user");
+        console.log(userDetails._id, "logged-in user");
 
-      setFollower(res.data?.users[0]?.follower.length)
-      setFollowing(res.data?.users[0]?.following.length)
-      const isFollowing = res.data?.users[0]?.follower.includes(
-        userDetails._id
-      );
-      console.log(isFollowing, "is following the logged-in user");
+        setFollower(res.data?.users[0]?.follower.length);
+        setFollowing(res.data?.users[0]?.following.length);
+        const isFollowing = res.data?.users[0]?.follower.includes(
+          userDetails._id
+        );
+        console.log(isFollowing, "is following the logged-in user");
 
-      setUser((prevUser) => ({
-        ...prevUser,
-        isFollowing,
-        _id: prevUser?._id ?? "",
-        username: prevUser?.username ?? "",
-        image: prevUser?.image ?? "",
-      }));
-    });
-  }
-}, [userDetails]);
+        setUser((prevUser) => ({
+          ...prevUser,
+          isFollowing,
+          _id: prevUser?._id ?? "",
+          username: prevUser?.username ?? "",
+          image: prevUser?.image ?? "",
+        }));
+      });
+    }
+  }, [userDetails]);
 
-// ...
-
+  // ...
 
   // ...
 
@@ -91,6 +90,7 @@ useEffect(() => {
 
     try {
       await axiosInstance.post("/follow", data);
+      setFollower(follower + 1);
       setUser((prevUser) => ({
         ...prevUser,
         isFollowing: true,
@@ -112,6 +112,7 @@ useEffect(() => {
     };
     try {
       await axiosInstance.post("/unfollow", data);
+      setFollower(follower - 1);
       setUser((prevUser) => ({
         ...prevUser,
         isFollowing: false,
@@ -119,7 +120,6 @@ useEffect(() => {
         username: prevUser?.username ?? "",
         image: prevUser?.image ?? "",
       }));
-
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -137,8 +137,8 @@ useEffect(() => {
                 <div className="relative">
                   <img
                     alt="..."
-                    src={user?.image ?user?.image: defaultIcon}
-                    className="shadow-xl rounded-full h-32 w-32 align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
+                    src={user?.image ? user?.image : defaultIcon}
+                    className="object-contain shadow-xl rounded-full h-32 w-32 align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-[150px] "
                   />
                 </div>
               </div>
@@ -152,13 +152,13 @@ useEffect(() => {
                   </div>
                   <div className="mr-4 p-3 text-center">
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                      {follower?follower:"0"}
+                      {follower ? follower : "0"}
                     </span>
                     <span className="text-sm text-blueGray-400">Followers</span>
                   </div>
                   <div className="lg:mr-4 p-3 text-center">
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                     {following?following:"0"}
+                      {following ? following : "0"}
                     </span>
                     <span className="text-sm text-blueGray-400">Following</span>
                   </div>
@@ -201,9 +201,11 @@ useEffect(() => {
                     );
                   })
                 ) : (
-                  <p className="flex justify-center items-center h-screen">
-                    No posts for you
-                  </p>
+                  <div className="w-full  grid col-span-3">
+                    <p className="flex justify-center items-start w-full">
+                      No posts
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

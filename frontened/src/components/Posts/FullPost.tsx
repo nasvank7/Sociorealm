@@ -16,13 +16,13 @@ interface Post {
   userId: {
     id: string;
     username: string;
-    image:string;
+    image: string;
   };
   description: string;
   likes: string;
   image: string;
-  saved:string;
-  createdAt:string
+  saved: string;
+  createdAt: string;
 }
 
 interface FullPostProps {
@@ -30,20 +30,38 @@ interface FullPostProps {
 }
 const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
   const userDetails = GetUsernameFromRedux();
-  const likesArray = postDetails.likes
-  ? Array.isArray(postDetails.likes)
-    ? postDetails.likes.join(",")
-    : postDetails.likes.split(",")
-  : [];
+  const [postDetailsfrom, setPostDetailsFrom] = useState({
+    _id: "",
+    userId: {
+      id: "",
+      username: "",
+      image: "",
+    },
+    description: "",
+    likes: "",
+    image: "",
+    saved: "",
+    createdAt: "",
+  });
+  useEffect(() => {
+    setPostDetailsFrom(postDetails);
+  }, [postDetails]);
+  const likesArray = postDetailsfrom.likes
+    ? Array.isArray(postDetailsfrom.likes)
+      ? postDetailsfrom.likes.join(",")
+      : postDetailsfrom.likes.split(",")
+    : [];
 
   const userId = userDetails ? userDetails._id : "";
   const likeStatus = userId ? likesArray.includes(userId) : undefined;
-  const saveStatus=postDetails.saved?.includes(userId) ?? false;
+  const saveStatus = postDetailsfrom.saved?.includes(userId) ?? false;
   const [liked, setLiked] = useState(likeStatus);
   const [saved, setSaved] = useState(saveStatus);
-  const [likesCount, setLikeCount] = useState(
-    Array.isArray(postDetails?.likes) ? postDetails.likes.length : 0
-  );
+  const [likesCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    setLikeCount(postDetails?.likes?.length);
+  }, [postDetails]);
   let width = "600";
   let dp,
     desc = "";
@@ -54,12 +72,12 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
 
   const handleLike = async (foo: any) => {
     const data = {
-      postId: postDetails?._id || "",
+      postId: postDetailsfrom?._id || "",
       userId: userDetails?._id || "",
       value: foo,
     };
     console.log(data, "THIS IS DATA");
-    console.log(postDetails);
+    console.log(postDetailsfrom);
     try {
       setLiked(foo);
       if (foo) {
@@ -86,78 +104,83 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
     }
   };
 
-  const handleSave =async (foo: any) => {
+  const handleSave = async (foo: any) => {
     const data = {
-      postId: postDetails._id,
+      postId: postDetailsfrom._id,
       userId: userDetails?._id,
       value: foo,
     };
-   try {
-    setSaved(foo)
-    await axiosInstance.patch('/save',data)
-   
-   } catch (error) {
-    
-   }
+    try {
+      setSaved(foo);
+      await axiosInstance.patch("/save", data);
+    } catch (error) {}
   };
-  const headerUsername = postDetails?.userId?.username || "";
-const headerImage = postDetails?.userId?.image || "";
+  const headerUsername = postDetailsfrom?.userId?.username || "";
+  const headerImage = postDetailsfrom?.userId?.image || "";
 
   return (
-    <div id={postDetails._id}
-      className="card border w-full border-solid mt-2 rounded-xl shadow-md "
-      key={postDetails._id}
+    <div
+      id={postDetailsfrom._id}
+      className="  border w-full max-w-[350px] flex flex-col border-solid mt-2 rounded-xl shadow-md"
+      key={postDetailsfrom._id}
     >
-      <Header  username={headerUsername} image={headerImage} postDetails={postDetails} />
+      <div className="flex flex-row justify-evenly">
+        <Header
+          username={headerUsername}
+          image={headerImage}
+          postDetails={postDetailsfrom}
+        />
+      </div>
       <div className="flex justify-between items-center">
         <div className="mb-2 ml-4 flex gap-5 items-center">
           <span className="text-xs text-gray-400"></span>
         </div>
       </div>
 
-      <>
-        <div className="mt-2 flex justify-between mx-4">
-          <div className="flex justify-between gap-3 ">
-            <img
-              src={postDetails.image}
-              alt="Post"
-              className="w-[20rem] h-[30rem] object-cover rounded-lg"
-            />
-          </div>
+      <div className="mt-2 flex justify-between mx-4">
+        <div className="flex justify-between gap-3">
+          <img
+            src={postDetailsfrom.image}
+            alt="Post"
+            className="w-[20rem] h-[30rem] object-contain rounded-lg"
+          />
         </div>
+      </div>
 
-        <div className="ml-6 my-1 select-none flex  ">
+      <div className="flex flex-row w-full   space-x-6 flex-nowrap">
+        <div className="flex justify-evenly w-1/2 ">
           <span onClick={() => handleLike(!liked)}>
             <Like liked={liked} />
-             
-          </span>
-          <h2></h2>
-          <span>
-            <Comment postDetails={postDetails} />
-          </span>
-          <span onClick={() => handleSave(!saved)}>
-            <Save saved={saved}  />
           </span>
           <span>
-            <Share postDetails={postDetails} />
+            <Comment postDetails={postDetailsfrom} />
           </span>
         </div>
-        <div className="ml-6   flex flex-col">
-          <div className="">
-
-          <span className="font-semibold">{likesCount>0?likesCount:""} likes </span>
-          </div>
-          <div className="pb-4 flex ">
-            <span className="font-bold ">{postDetails.userId?.username}</span>
-          <span className="cursor-pointer select-none ml-10 font-semibold" >
-            
-            {postDetails?.description}
+        <div className="flex justify-evenly w-1/2 ">
+          <span className="py-2" onClick={() => handleSave(!saved)}>
+            <Save saved={saved} />
           </span>
-         
-          </div>
-          <span>{moment(postDetails?.createdAt ?? '20-08-2023').fromNow()}</span>
+          <span>
+            <Share postDetails={postDetailsfrom} />
+          </span>
         </div>
-      </>
+      </div>
+      <div className="ml-6 flex flex-col">
+        <div>
+          <span className="font-semibold">
+            {likesCount > 0 ? likesCount : ""} likes{" "}
+          </span>
+        </div>
+        <div className="pb-4 flex">
+          <span className="font-bold">{postDetailsfrom.userId?.username}</span>
+          <span className="cursor-pointer select-none ml-10 font-semibold">
+            {postDetailsfrom?.description}
+          </span>
+        </div>
+        <span>
+          {moment(postDetailsfrom?.createdAt ?? "20-08-2023").fromNow()}
+        </span>
+      </div>
     </div>
   );
 };

@@ -26,15 +26,21 @@ const SIngle = () => {
         })
     },[postId])
     
+    
+    console.log({post});
+    
   return (
     <>
-      <div className='container flex justify-center items-center '>
+    <div className='container flex justify-center items-center '>
+    <div className='w-[350px] h-[500px]'>
      {post ? (
       <FullPost postDetails={post}/>
     ) : (
       <p>Loading...</p>
     )}
   </div>
+    </div>
+     
     </>
 
   )

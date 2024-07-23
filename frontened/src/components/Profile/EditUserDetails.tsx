@@ -16,6 +16,7 @@ const EditUserDetails = () => {
   const [username, setUserName] = useState<string>(userDetails.username);
   const [image, setImage] = useState<string>(userDetails.image);
   const userCred = useSelector((state: RootState) => state.user.userCred);
+  const themeMode = useSelector((state: RootState) => state.theme.mode);
 
   useEffect(() => {
     setUserName(userDetails.username);
@@ -83,21 +84,18 @@ const EditUserDetails = () => {
 
   return (
     <>
-      <section className="pt-16 bg-blueGray-50 w-full h-full">
+      <section className="pt-16 -50 w-full h-full overflow-y-auto">
         <div className="w-full lg:w-full md:w-full px-4 mx-auto">
-          <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
+          <div className="relative flex flex-col min-w-0 break-words  w-full mb-6 shadow-xl rounded-lg mt-16">
             <div className="">
-              <div className="flex flex-wrap justify-center">
+              <div className="flex flex-col justify-center ">
                 <form action="">
-                  <div className="w-full px-4 flex justify-center">
-                    <div
-                      className="relative"
-                      onClick={() => imageRef.current?.click()}
-                    >
+                  <div className="w-full px-4 flex justify-center items-center">
+                    <div className="" onClick={() => imageRef.current?.click()}>
                       <img
                         alt="..."
                         src={image}
-                        className="shadow-xl rounded-full h-32 w-32 align-middle border absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px "
+                        className="shadow-xl rounded-full h-32 w-32 align-middle border   max-w-150-px "
                       />
                       <input
                         ref={imageRef}
@@ -109,35 +107,77 @@ const EditUserDetails = () => {
                       />
                     </div>
                   </div>
-                  <div className=" flex mt-28">
+                  <div className=" flex mt-28 items-center justify-center">
                     <button
                       type="button"
                       onClick={uploadImage}
-                      className="items-center rounded-lg w-[5rem] font-semibold bg-green-600"
+                      className="items-center rounded-lg w-[150px] font-semibold bg-blue-400 text-white p-2  max-w-[250px]"
                     >
-                      change
+                      Change photo
                     </button>
                   </div>
                 </form>
                 <form action="">
-                  <div className="w-[5rem] flex justify-center  px-4 text-center mt-40">
-                    <div className="flex justify-between  lg:pt-4 pt-8">
-                      <h1 className="font-bold  pr-10">Username</h1>
+                  <div className="w-full flex   justify-center  px-10 text-center mt-10  ">
+                    <div className="w-full flex flex-col items-start   justify-between  lg:pt-4 pt-8 ">
+                      <label htmlFor="" className="font-bold">
+                        User Name
+                      </label>
 
                       <input
                         type="text"
                         name="username"
                         value={username}
+                        placeholder="user name"
                         onChange={(e) => setUserName(e.target.value)}
-                        className="rounded-lg"
+                        className={`rounded-lg w-full ${
+                          themeMode === "dark" ? "bg-black" : "bg-white"
+                        }`}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full flex   justify-center  px-10 text-center ">
+                    <div className="w-full flex flex-col items-start   justify-between  lg:pt-4 pt-8">
+                      <label htmlFor="" className="font-bold">
+                        Bio
+                      </label>
+
+                      <input
+                        type="text"
+                        name="username"
+                        value={``}
+                        placeholder="Bio"
+                        onChange={(e) => setUserName(e.target.value)}
+                        className={`rounded-lg w-full ${
+                          themeMode === "dark" ? "bg-black" : "bg-white"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex   justify-center  px-10 text-center ">
+                    <div className="w-full flex flex-col items-start   justify-between  lg:pt-4 pt-8">
+                      <label htmlFor="" className="font-bold">
+                        Gender
+                      </label>
+
+                      <select
+                        name=""
+                        id=""
+                        className={`rounded-lg w-full p-2 ${
+                          themeMode === "dark" ? "bg-black" : "bg-white"
+                        }`}
+                      >
+                        <option value="">Male</option>
+                        <option value="">Female</option>
+                        {/* <option value="">Male</option> */}
+                      </select>
                     </div>
                   </div>
                   <div className="mt-8 ">
                     <button
                       type="button"
                       onClick={handleusername}
-                      className="mr-10 rounded-lg w-[5rem] font-semibold bg-green-600 "
+                      className="items-center rounded-lg w-[100px] font-semibold bg-blue-400 text-white p-2  max-w-[100px] "
                     >
                       Change{" "}
                     </button>

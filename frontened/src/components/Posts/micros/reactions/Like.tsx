@@ -6,9 +6,9 @@ const Like = (props: any) => {
   return (
     <>
       {liked ? (
-        <AiFillHeart color="red" className="w-10 h-8 cursor-pointer" />
+        <AiFillHeart color="red" className="sm:w-6 md:w-8 lg:w-10 h-8 cursor-pointer" />
       ) : (
-        <AiOutlineHeart className="w-10 h-8 cursor-pointer" />
+        <AiOutlineHeart className="sm:w-6 md:w-8 lg:w-10 h-8 cursor-pointer" />
       )}
     </>
   );

@@ -29,9 +29,9 @@ const Modal:React.FC<showProps> = ({show, user, post, userId }) => {
   const notify = () => toast.success("Reported Successfully");
      const handleDelete=async()=>{
        await axiosInstance.delete(`/deletePost/${post._id}`).then((res)=>{
-        // nav(-1)
         
         show(false)
+        window.location.reload(); 
        })
 
      }

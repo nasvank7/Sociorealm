@@ -4,79 +4,71 @@ import { axiosInstance } from "../../services/userApi/axiosInstance";
 import { Link } from "react-router-dom";
 import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
 
-
-interface showProps {
+interface ShowProps {
   show: (isVisible: boolean) => void;
 }
 
-const Search: React.FC<showProps> = ({ show }) => {
-  const userDetails=GetUsernameFromRedux()
+const Search: React.FC<ShowProps> = ({ show }) => {
+  const userDetails = GetUsernameFromRedux();
   const [searchUser, setSearchUser] = useState<any[]>([]);
-  const [searchTerm,setSearchTerm]=useState('')
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     axiosInstance.get('/getAlluser').then((res) => {
-      console.log(res.data, "these are data");
       setSearchUser(res.data);
     });
   }, []);
 
   const filteredUser = searchTerm
-    ? searchUser.filter((user) => {
-        if (user.username && typeof searchTerm === "string") {
-          const matched = user.username
-            .toLowerCase()
-            .includes(searchTerm.trim().toLowerCase());
-          return matched;
-        }
-        return false;
-      })
+    ? searchUser.filter((user) =>
+        user.username?.toLowerCase()?.includes(searchTerm.trim()?.toLowerCase())
+      )
     : [];
-  console.log(filteredUser,"these are filtered user");
-  
+    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      // Prevent closing if clicked inside the search container
+      if (!e.currentTarget.contains(e.target as Node)) {
+        show(false);
+      }
+    };
 
   return (
     <>
-      <div
-        className="fixed top-0 left-0 right-0 bottom-0 z-10"
-        onClick={() => show(false)}
-      ></div>
-      <div className="container flex flex-col rounded border-zinc-950 w-[22rem] h-[30rem] bg-black bg-opacity-90 fixed top-[50%] left-[50%] right-[auto] bottom-[auto] -mr-[50%] transform translate-x-[-50%] translate-y-[-50%] z-[99] border-2">
-        <span onClick={() => show(false)} className="cursor-pointer">
-          <IoArrowBackCircle size={35} />
-        </span>
-         <div>
-
-        <input type="text" value={searchTerm} className="border flex-grow items-center justify-center ml-10 pl-24 mr-10 rounded-2xl border-zinc-950 h-[2rem] mt-10" onChange={(e)=>setSearchTerm(e.target.value)} />
-         </div>
-   
-        
-         {filteredUser.map((user) => (
-        <div className="border rounded-lg flex  bg-slate-600 mt-5">
-          {userDetails?.username===user.username?
-           <Link to='/userProfile'>
-           <div className=" flex flex-row   " >
-                 <img src={user.image} className="rounded-full w-8 h-8" alt="" />
-                <p key={user.id} className="text-lg pl-7 items-center justify-center">{user.username}</p>
-               
-              </div>
-           </Link> :
-           <Link to={`/user/${user.username}`}>
-             <div className=" flex flex-row   " >
-                 <img src={user.image} className="rounded-full w-8 h-8" alt="" />
-                <p key={user.id} className="text-lg pl-7 items-center justify-center">{user.username}</p>
-               
-              </div>
-           </Link>
-          }
-        
-           
-         
+      {/* <div className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-gray-900 bg-opacity-70" onClick={handleOverlayClick}></div> */}
+      <div className="container w-full h-full max-w-md mx-auto  rounded-lg bg-gray-900 text-white shadow-lg z-50">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-800">
+          <span className="cursor-pointer" onClick={() => show(false)}>
+            <IoArrowBackCircle size={35} />
+          </span>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search users..."
+            className="flex-grow px-4 py-2 ml-2 rounded-full bg-gray-800 border border-gray-700 focus:outline-none"
+          />
         </div>
-        
-        ))}
-        
-       
+        <div className="px-4 py-2">
+          {filteredUser.length === 0 ? (
+            <p className="text-center text-gray-400 mt-4">No users found</p>
+          ) : (
+            filteredUser.map((user) => (
+              <Link
+                key={user.id}
+                to={userDetails?.username === user.username ? '/userProfile' : `/user/${user.username}`}
+                className="block rounded-lg hover:bg-gray-800 transition duration-200 ease-in-out mb-2"
+              >
+                <div className="flex items-center space-x-4 py-2">
+                  <img
+                    src={user.image || "/avatar.jpg"}
+                    alt=""
+                    className="rounded-full w-12 h-12 object-cover"
+                  />
+                  <p className="text-lg">{user.username}</p>
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
       </div>
     </>
   );

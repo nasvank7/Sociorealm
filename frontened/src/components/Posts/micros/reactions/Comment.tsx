@@ -20,7 +20,7 @@ const Comment: React.FC<FullPostProps> = ({ postDetails }) => {
     <>
       {showBox && <CommentScreen show={setShowBox} post={postDetails} />}
       <span className="cursor-pointer" onClick={() => setShowBox(true)}>
-        <AiOutlineComment className="w-10 h-8 " />
+        <AiOutlineComment className="sm:w-6 md:w-8 lg:w-10 h-8 " />
       </span>
     </>
   );

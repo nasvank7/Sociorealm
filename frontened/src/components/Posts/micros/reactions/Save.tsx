@@ -9,11 +9,11 @@ const Save = (props:any) => {
       {saved ? (
         <BsBookmarkPlusFill
           color="green"
-          className="w-10 h-8 flex ml-32 cursor-pointer "
+          className="sm:w-6 md:w-8 lg:w-10 h-8 flex py-2  cursor-pointer "
         />
       ) : (
         <BsBookmarkPlus
-          className="w-10 h-8 flex ml-32 cursor-pointer"
+          className="sm:w-6 md:w-8 lg:w-10 flex  cursor-pointer"
           size={25}
         />
       )}

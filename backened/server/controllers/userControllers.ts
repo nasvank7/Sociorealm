@@ -16,7 +16,7 @@ const userController = {
   getUser: async (req: Request, res: Response) => {
     try {
       const user = await UserModel.findById(req.body.userId);
-      console.log(user);
+   
       res.status(200).send({
         success: true,
         message: "user fetched success",
@@ -32,15 +32,14 @@ const userController = {
 
   Register: async (req: Request, res: Response) => {
     const data = await UserModel.find();
-    console.log(data, "////////");
+
 
     res.status(200).json(data);
   },
 
   postRegister: async (req: Request, res: Response) => {
     try {
-      console.log("vchkgjv");
-      console.log(req.body, "////");
+     
       let {
         username,
         email,
@@ -64,7 +63,7 @@ const userController = {
       });
       await user.save();
 
-      console.log(user, "//////");
+
 
       res.status(200).send({ message: "You have registered successfully" });
     } catch (error) {
@@ -121,7 +120,7 @@ const userController = {
     
   },
   googleLogin: async (req: Request, res: Response) => {
-    console.log("helo");
+
     console.log(req.body.credential,"req credentials");
     
     const token = req.body.credential;

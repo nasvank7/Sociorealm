@@ -11,7 +11,7 @@ const Share = (postDetails: any) => {
     <>
       <FaShare
         onClick={() => share(postDetails?.postDetails?._id)}
-        className="w-10 h-8 cursor-pointer"
+        className="sm:w-6 md:w-8 lg:w-10 h-8 cursor-pointer"
       />
     </>
   );

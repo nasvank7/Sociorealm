@@ -48,13 +48,13 @@ const Notification:React.FC<showProps> = ({show}) => {
         className="fixed top-0 left-0 right-0 bottom-0 z-10"
         onClick={() => show(false)}
       ></div>
-      <div className="h-[42rem] bg-gray-50 py-4 w-[22rem] shadow-2xl border-l-4 fixed top-[50%] left-[50%] right-[auto] bottom-[auto] -mr-[50%] transform translate-x-[-50%] translate-y-[-50%] z-[99]   border-zinc-950 rounded-lg   items-start">
+      <div className="h-full w-[17rem] bg-gray-900 py-4  shadow-2xl border-l-4   border-r-4   border-zinc-950 rounded-lg   ">
         <div className='flex justify-center w-ful'>
-          <h1 className=''>Notifications</h1>
+          <h1 className='text-white'>Notifications</h1>
         </div>
         <div>
             <div className='flex justify-end mr-8 mt-3'>
-                <p className='text-xs cursor-pointer' onClick={handleClear}>clear all </p>
+                <p className='text-xs text-white cursor-pointer' onClick={handleClear}>clear all </p>
             </div>
           {notification.map((notification) => (
             <div
