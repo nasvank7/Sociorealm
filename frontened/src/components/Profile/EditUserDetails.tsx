@@ -20,7 +20,8 @@ const EditUserDetails = () => {
 
   useEffect(() => {
     setUserName(userDetails.username);
-  }, []);
+    setImage(userDetails?.image);
+  }, [userDetails]);
 
   const handleusername = (e: any) => {
     axiosInstance

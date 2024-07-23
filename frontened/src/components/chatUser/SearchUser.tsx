@@ -62,7 +62,7 @@ const SearchUser = () => {
 
   const joinChat=(userId:string)=>{
     if(socket.current){
-      socket.current.emit('joinChat',{userId});
+      // socket.current.emit('joinChat',{userId});
       nav(`/chatuser/${userId}`);
     }
   }
@@ -94,7 +94,7 @@ const SearchUser = () => {
             <>
               {filteredUser.map((user) => (
                 <div
-                  className="flex flex-row border justify-between items-center p-2 rounded-xl border-solid border-gray-300 shadow-md mt-5 mx-2 bg-slate-100"
+                  className="flex flex-row border justify-between items-center p-2 rounded-xl border-solid border-gray-300 shadow-md mt-5 mx-2 "
                   key={user._id}
                 >
                   <div>

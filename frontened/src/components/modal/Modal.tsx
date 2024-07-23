@@ -74,9 +74,9 @@ const Modal:React.FC<showProps> = ({show, user, post, userId }) => {
         pauseOnHover
         className={"z-50"}
       />
-      <div className="w-[11rem] flex flex-col justify-center border-2 border- items-center  h-[16.2rem] hide-scrollbar overflow-y-auto bg-black bg-opacity-90 fixed top-[50%] left-[50%] right-[auto] bottom-[auto] -mr-[50%] transform translate-x-[-50%] translate-y-[-50%]  z-20 rounded-3xl">
-        <img src={post.image} alt="" className="w-full mb-5" />
-        <ul className="w-full text-center ">
+      <div className="w-[21rem] flex flex-col justify-center border-2 border- items-center  h-[16.2rem] hide-scrollbar overflow-y-auto bg-gray-100  fixed top-[50%] left-[50%] right-[auto] bottom-[auto] -mr-[50%] transform translate-x-[-50%] translate-y-[-50%]  z-20 rounded-3xl">
+        {/* <img src={post.image} alt="" className="w-full mb-5" /> */}
+        <ul className="w-full text-center px-2">
           {user ? (
             <li
               className="my-2 cursor-pointer text-red-500 font-semibold"
@@ -93,11 +93,11 @@ const Modal:React.FC<showProps> = ({show, user, post, userId }) => {
                   required
                   onChange={(e) => setReason(e.target.value.trim())}
                   placeholder="reason"
-                  className="w-full px-2 bg-transparent mb-2 hide-scrollbar border text-white border-gray-300 rounded-md focus:outline-none"
+                  className="w-full px-5 bg-transparent mb-2 hide-scrollbar border text-white border-gray-300 rounded-md focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="bg-transparent  p-1  text-white focus:outline-none"
+                  className="bg-transparent  p-1 focus:outline-none"
                 >
                   <AiOutlineSend size={15} />
                 </button>
@@ -105,7 +105,7 @@ const Modal:React.FC<showProps> = ({show, user, post, userId }) => {
             </>
           )}
           <hr />
-          <li className="my-2 cursor-pointer text-slate-100 font-semibold" onClick={() => show(false)}>
+          <li className="my-2 cursor-pointer  font-semibold" onClick={() => show(false)}>
             Cancel
           </li>
         </ul>

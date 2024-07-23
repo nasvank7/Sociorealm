@@ -4,6 +4,7 @@ import SearchUser from "./SearchUser";
 import Navbar from "../Navbar/Navbar";
 import { io, Socket } from "socket.io-client";
 import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
+import { axiosInstance } from "../../services/userApi/axiosInstance";
 
 const Chat = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -11,30 +12,44 @@ const Chat = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const socket = useRef<Socket | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
-    // Initialize socket connection
-    socket.current = io("http://localhost:3001"); // replace with your server URL
+    const fetchUserData = async () => {
+      try {
+        const response = await axiosInstance.get("/getAlluser");
+        console.log(response?.data, "users is here");
+        if (Array.isArray(response?.data)) {
+          const Allusers = response.data;
+          const Alluser = Allusers.filter(
+            (user: any) => user._id === userDetails?._id
+          );
+          console.log(Alluser, Allusers, "These are users");
 
-    // Check if socket is connected
+          setUsers(Alluser);
+        }
+      } catch (error) {}
+    };
+    fetchUserData();
+  }, [userId]);
+  useEffect(() => {
+    socket.current = io("http://localhost:3001");
+
     socket.current.on("connect", () => {
       console.log("Connected to socket server");
     });
 
-    // Check if socket failed to connect
     socket.current.on("connect_error", (error) => {
       console.error("Connection error:", error);
     });
 
-    // Join chat room
-    if (userId) {
+    if (userDetails?._id) {
       console.log(`Joining chat room: ${userId}`);
-      socket.current.emit("joinChat", { userId });
+      socket.current.emit("joinChat", { userId: userDetails?._id });
     }
 
-    // Listen for incoming messages
     socket.current.on("receive_message", (message) => {
-      console.log("///////||||||||||")
+      console.log("///////||||||||||");
       console.log("Received message:", message);
       setMessages((prevMessages) => [...prevMessages, message]);
     });
@@ -48,7 +63,7 @@ const Chat = () => {
       socket.current?.disconnect();
       console.log("Disconnected from socket server");
     };
-  }, [userId,userDetails,messages]);
+  }, [userId, userDetails, messages]);
 
   const sendMessage = useCallback(() => {
     if (currentMessage.trim() !== "" && socket.current) {
@@ -67,26 +82,37 @@ const Chat = () => {
 
   return (
     <div className="h-screen w-full flex relative">
-      <div className="border-l-4 border border-black border-opacity-75 w-1/4 ml-4 my-4 rounded-3xl sticky">
+      <div className="border-l-2  border border-opacity-75 w-1/4 ml-4 my-4  sticky">
         <Navbar />
       </div>
 
-      <div className="w-1.5/4 bg-gray-100 rounded-3xl border mr-4 my-4 border-black border-opacity-75">
+      <div className="w-1.5/4 rounded-3xl border mr-4 my-4  border-opacity-75">
         <SearchUser />
       </div>
 
-      <div className="w-3/4 bg-gray-100 rounded-3xl border mr-4 my-4 border-black border-opacity-75 border-l-2">
+      <div className="w-3/4  rounded-3xl border mr-4 my-4 border-opacity-75 border-l-2">
         <div className="h-full relative flex flex-col">
-          <div className="h-16 mt-2 mx-2 bg-slate-400 border rounded-xl flex flex-row items-center justify-between"></div>
+          <div className="h-16 mt-2 mx-2  border rounded-xl flex flex-row items-center  gap-x-4 bg-gray-400">
+            <div>
+              <img
+                src={users[0]?.image}
+                className="object-contain w-10 h-10 rounded-full"
+                alt=""
+              />
+            </div>
+            <div className="font-semibold">
+              <p>{users[0]?.username}</p>
+            </div>
+          </div>
 
           <div className="chat-container flex flex-col justify-between h-full">
-            <div className="messages flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="messages flex flex-col w-full  overflow-y-auto p-4 space-y-4">
               {messages.map((msg, index) => (
                 <div
                   key={index}
                   className={`message max-w-xs p-2 rounded-lg ${
                     msg.sender === userDetails?._id
-                      ? "bg-blue-500 text-white self-end"
+                      ? "bg-blue-500 self-end text-white"
                       : "bg-gray-300 self-start"
                   }`}
                 >
@@ -94,6 +120,7 @@ const Chat = () => {
                 </div>
               ))}
             </div>
+
             <div className="message-input flex items-center p-4">
               <input
                 type="text"

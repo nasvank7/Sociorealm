@@ -12,15 +12,19 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      
     },
     password: {
       type: String,
-      
     },
-    image:[{
-      type:String,
-      default:"https://cdn-icons-png.flaticon.com/512/1077/1077114.png"
+    image: [
+      {
+        type: String,
+        default: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png",
+      },
+    ],
+    story: [{
+      type: String,
+      default: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png",
     }],
 
     jti: {
@@ -31,11 +35,10 @@ const userSchema = new mongoose.Schema(
     },
     isBlocked: {
       type: Boolean,
-      
     },
-    isFollowing:{
-      type:Boolean
-    }
+    isFollowing: {
+      type: Boolean,
+    },
   },
   {
     timestamps: true,

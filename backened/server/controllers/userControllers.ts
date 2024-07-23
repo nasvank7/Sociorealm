@@ -16,7 +16,7 @@ const userController = {
   getUser: async (req: Request, res: Response) => {
     try {
       const user = await UserModel.findById(req.body.userId);
-   
+
       res.status(200).send({
         success: true,
         message: "user fetched success",
@@ -33,13 +33,11 @@ const userController = {
   Register: async (req: Request, res: Response) => {
     const data = await UserModel.find();
 
-
     res.status(200).json(data);
   },
 
   postRegister: async (req: Request, res: Response) => {
     try {
-     
       let {
         username,
         email,
@@ -62,8 +60,6 @@ const userController = {
         isBlocked: true,
       });
       await user.save();
-
-
 
       res.status(200).send({ message: "You have registered successfully" });
     } catch (error) {
@@ -97,32 +93,33 @@ const userController = {
       res.status(500).send({ err: "internal Server Error" });
     }
   },
-  GoogleSignup:async(req:Request,res:Response)=>{
-    const token=req.body.credential;
+  GoogleSignup: async (req: Request, res: Response) => {
+    const token = req.body.credential;
     console.log(token);
-    
-    const decoded=jwt.decode(token);
-    console.log(decoded,"token");
-    const {name,email,jti}=decoded as JwtPayload
-    const  newUser= new UserModel({
-      username:name,email,jti,status:true,
-    })
-    newUser.save()
-    .then(saved=>{
-      console.log("userSaved",saved);
-      res.status(200).json({message:"User Saved successfully"})
-      
-    })
-    .catch(err => {
-      console.error('Error saving user:', err);
-      res.status(500).json({ message: 'Failed to save user' });
-  });
-    
+
+    const decoded = jwt.decode(token);
+    console.log(decoded, "token");
+    const { name, email, jti } = decoded as JwtPayload;
+    const newUser = new UserModel({
+      username: name,
+      email,
+      jti,
+      status: true,
+    });
+    newUser
+      .save()
+      .then((saved) => {
+        console.log("userSaved", saved);
+        res.status(200).json({ message: "User Saved successfully" });
+      })
+      .catch((err) => {
+        console.error("Error saving user:", err);
+        res.status(500).json({ message: "Failed to save user" });
+      });
   },
   googleLogin: async (req: Request, res: Response) => {
+    console.log(req.body.credential, "req credentials");
 
-    console.log(req.body.credential,"req credentials");
-    
     const token = req.body.credential;
     const decoded = jwt.decode(token);
     console.log(decoded, "token");
@@ -149,9 +146,9 @@ const userController = {
       }
     }
   },
-  editUsername:async(req:Request,res:Response)=>{
-    const { username ,currentusername} = req.body;
-    console.log(username,currentusername);
+  editUsername: async (req: Request, res: Response) => {
+    const { username, currentusername } = req.body;
+    console.log(username, currentusername);
 
     // Ensure that the UserModel is correctly defined and imported
 
@@ -174,21 +171,20 @@ const userController = {
     res.status(200).json({
       msg: "Successfully updated",
       data: updatedUser,
-      success:true
+      success: true,
     });
-  }
-  ,
+  },
   editProfile: async (req: Request, res: Response) => {
     try {
       console.log("hello phtototo");
       console.log(req.body);
-  
+
       const { userId } = req.body;
       console.log(userId, "this is the user");
-  
+
       const { image } = req.body;
       console.log(image);
-  
+
       let cloudImageUrls = [];
       const images = req.files as Express.Multer.File[];
       if (images && images.length > 0) {
@@ -199,11 +195,11 @@ const userController = {
       }
       const userProfile = await UserModel.findByIdAndUpdate(
         userId,
-        { image: cloudImageUrls },
+        { image: cloudImageUrls, story: cloudImageUrls },
         { new: true }
       );
       console.log(userProfile, "this is userProfile");
-  
+
       // Send the response once, either as JSON or with a status code
       res.status(200).json({
         message: "Successfully uploaded photo",
@@ -218,7 +214,6 @@ const userController = {
       });
     }
   },
-  
 
   getPOst: async (req: Request, res: Response) => {
     try {
@@ -288,46 +283,42 @@ const userController = {
       res.status(500).send("AN error occured");
     }
   },
-  userPost:async(req:Request,res:Response)=>{
+  userPost: async (req: Request, res: Response) => {
     try {
-      const userId=req.params.id
-      console.log(userId,"this is userid");
+      const userId = req.params.id;
+      console.log(userId, "this is userid");
       if (!ObjectId.isValid(userId)) {
         return res.status(400).json({
           success: false,
           message: "Invalid user ID format",
         });
       }
-      
-      
-      const userPost=await Posts.find({userId:new ObjectId(userId)}).populate('userId')
-      console.log(userPost,"this is hani post");
+
+      const userPost = await Posts.find({
+        userId: new ObjectId(userId),
+      }).populate("userId");
+      console.log(userPost, "this is hani post");
       res.status(200).json({
         success: true,
         message: "all post are here",
         data: userPost,
       });
-      
     } catch (error) {
       console.log(error);
-      
     }
-   
   },
-  FriendProfile:async(req:Request,res:Response)=>{
+  FriendProfile: async (req: Request, res: Response) => {
     try {
-      const {username}=req.params
-      console.log(username,"this is friend username");
-     const friendProfile=await UserModel.findOne({username:username}) 
-     res.status(200).json({
-      data:friendProfile
-     })
-      
+      const { username } = req.params;
+      console.log(username, "this is friend username");
+      const friendProfile = await UserModel.findOne({ username: username });
+      res.status(200).json({
+        data: friendProfile,
+      });
     } catch (error) {
       console.log(error);
-      
     }
-  }
+  },
 };
 
 export default userController;

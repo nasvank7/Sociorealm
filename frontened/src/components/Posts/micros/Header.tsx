@@ -34,12 +34,20 @@ const Header: React.FC<HeaderProps> = ({ username, image, postDetails }) => {
       <div className="flex items-center w-full">
         {userDetails?.username === username ? (
           <Link to="/userProfile" className="flex items-center">
-            <img src={image} alt="" className="rounded-full w-8 h-8 object-contain" />
+            <img
+              src={image}
+              alt=""
+              className="rounded-full w-8 h-8 object-contain"
+            />
             <h2 className="font-bold cursor-pointer ml-2">{username}</h2>
           </Link>
         ) : (
           <Link to={`/user/${username}`} className="flex items-center">
-            <img src={image} alt="" className="rounded-full w-10 h-10 object-contain" />
+            <img
+              src={image}
+              alt=""
+              className="rounded-full w-10 h-10 object-contain"
+            />
             <h2 className="font-bold cursor-pointer ml-2">{username}</h2>
           </Link>
         )}

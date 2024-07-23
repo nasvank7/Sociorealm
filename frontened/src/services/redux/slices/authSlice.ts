@@ -4,20 +4,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import { userInfo } from "os";
 
 export interface UserCred {
-  _id:string;
+  _id: string;
   username: string;
   email: string;
-  image:string;
+  image: string;
+  story: string;
 }
 
 export interface UserState {
   userCred: UserCred | null;
-  mode:any
+  mode: any;
 }
 
 const initialState: UserState = {
   userCred: null,
-  mode:"light"
+  mode: "light",
 };
 
 const authSlice = createSlice({
@@ -28,7 +29,7 @@ const authSlice = createSlice({
       state.userCred = action.payload;
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
     },
-    setMode:(state,action)=>{
+    setMode: (state, action) => {
       state.mode = action.payload;
     },
     logout: (state) => {
@@ -38,6 +39,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout,setMode } = authSlice.actions;
+export const { setCredentials, logout, setMode } = authSlice.actions;
 
 export default authSlice.reducer;
