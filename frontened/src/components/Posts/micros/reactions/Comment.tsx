@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import { AiOutlineComment } from "react-icons/ai";
 import CommentScreen from "../../Comment";
+
 interface CommentProps {
-  _id: string;
-  userId: {
-    id: string;
-    username: string;
-  };
-  description: string;
-  likes: string;
-  image: string;
+
+    _id: string;
+    userId: {
+      _id: string;
+      username: string;
+      image: string;
+    };
+    description: string;
+    likes: string[];
+    image: string;
+    saved: string[];
+    createdAt: string;
+ 
 }
 interface FullPostProps {
   postDetails: CommentProps;
