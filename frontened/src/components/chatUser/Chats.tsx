@@ -22,16 +22,35 @@ const Chat = () => {
         if (Array.isArray(response?.data)) {
           const Allusers = response.data;
           const Alluser = Allusers.filter(
-            (user: any) => user._id === userDetails?._id
+            (user: any) => user._id === userId
           );
           console.log(Alluser, Allusers, "These are users");
 
           setUsers(Alluser);
         }
-      } catch (error) {}
+      } catch (error) { }
     };
     fetchUserData();
   }, [userId]);
+
+  useEffect(() => {
+    const fetchAllMessagesWithThisCurrentUser = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/get/chat/msg/${userDetails?._id}/${userId}`
+        );
+        console.log({ response });
+
+        if (Array.isArray(response?.data)) {
+          setMessages(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchAllMessagesWithThisCurrentUser();
+  }, [userId, userDetails?._id]);
+
   useEffect(() => {
     socket.current = io("http://localhost:3001");
 
@@ -49,9 +68,8 @@ const Chat = () => {
     }
 
     socket.current.on("receive_message", (message) => {
-      console.log("///////||||||||||");
       console.log("Received message:", message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => [...prevMessages, { myself: false, message: message.content }]);
     });
 
     // Listen for any errors
@@ -63,9 +81,9 @@ const Chat = () => {
       socket.current?.disconnect();
       console.log("Disconnected from socket server");
     };
-  }, [userId, userDetails, messages]);
+  }, [userId, userDetails]);
 
-  const sendMessage = useCallback(() => {
+  const sendMessage = useCallback(async () => {
     if (currentMessage.trim() !== "" && socket.current) {
       const message = {
         userId,
@@ -75,7 +93,15 @@ const Chat = () => {
 
       console.log("Sending message:", message);
       socket.current.emit("send_message", message);
-      setMessages((prevMessages) => [...prevMessages, message]); // Add the message to local state
+      const sendMessage = await axiosInstance.post("/msg", {
+        from: userDetails?._id,
+        to: userId,
+        message: currentMessage,
+      });
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { myself: true, message: currentMessage },
+      ]); // Add the message to local state
       setCurrentMessage(""); // Clear the input field after sending
     }
   }, [currentMessage, userId, userDetails]);
@@ -110,13 +136,12 @@ const Chat = () => {
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`message max-w-xs p-2 rounded-lg ${
-                    msg.sender === userDetails?._id
-                      ? "bg-blue-500 self-end text-white"
-                      : "bg-gray-300 self-start"
-                  }`}
+                  className={`message max-w-xs p-2 rounded-lg ${msg.myself
+                    ? "bg-blue-500 self-end text-white text-left"
+                    : "bg-gray-300 self-start text-left"
+                    }`}
                 >
-                  <p>{msg.content}</p>
+                  <p>{msg.message}</p>
                 </div>
               ))}
             </div>
