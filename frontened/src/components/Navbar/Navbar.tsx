@@ -27,6 +27,7 @@ import Notification from "../Notification/Notification";
 import { motion } from "framer-motion";
 import avatar from "../../../public/images/avatar.jpg";
 import ThemeToggle from "../../pages/Theme/ThemeToggle";
+import SearchUser from "../chatUser/SearchUser";
 const Navbar = () => {
   const userDetails = GetUsernameFromRedux();
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ const Navbar = () => {
   const mode = useSelector((state: RootState) => state.user.mode);
   const [showBox, setShowBox] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [message, setMessage] = useState(false);
   useEffect(() => {
     if (localStorage.getItem("jwtToken")) {
       console.log(localStorage.getItem("jwtToken"));
@@ -75,15 +77,20 @@ const Navbar = () => {
   return (
     <div className="h-full w-full flex">
       <motion.div
-        className={`${showBox || showNotification ? "sm:w-[40%] lg:w-[20%] navbar h-full  flex flex-col items-center justify-center" : "w-[100%] navbar h-full  flex flex-col items-center justify-center" }`}
-        
+        className={`${
+          showBox || showNotification || message
+            ? "sm:w-[40%] lg:w-[20%] navbar h-full  flex flex-col items-center justify-center"
+            : "w-[100%] navbar h-full  flex flex-col items-center justify-center"
+        }`}
         transition={{ duration: 0.5 }}
       >
         <ul className="h-full flex flex-col justify-evenly sm:items-center lg:items-start ml-2 text-sm font-bold xs:text-center max-h-[80%]">
           <li className="text-7xl flex justify-center sm:justify-normal mt-3">
             <span
               className={` text-6xl text-dark-400 italic font-qwitcher-grypen ${
-                showBox || showNotification ? "hidden" : "hidden lg:flex"
+                showBox || showNotification || message
+                  ? "hidden"
+                  : "hidden lg:flex"
               }`}
             >
               sociorealm
@@ -94,10 +101,18 @@ const Navbar = () => {
               <FontAwesomeIcon
                 icon={faHome}
                 className={`${
-                  showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                  showBox || showNotification || message
+                    ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                    : "cursor-pointer"
                 }`}
               />
-              <span className={` ${showBox || showNotification ? "hidden" : "hidden lg:block"}`}>
+              <span
+                className={` ${
+                  showBox || showNotification || message
+                    ? "hidden"
+                    : "hidden lg:block"
+                }`}
+              >
                 HOME
               </span>
             </li>
@@ -106,15 +121,27 @@ const Navbar = () => {
             <FontAwesomeIcon
               icon={faSearch}
               className={`${
-                showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                showBox || showNotification || message
+                  ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                  : "cursor-pointer"
               }`}
-              onClick={() =>{ setShowBox(true);setShowNotification(false)}}
+              onClick={() => {
+                setShowBox(true);
+                setShowNotification(false);
+                setMessage(false);
+              }}
             />
             <span
               className={` ${
-                showBox || showNotification ? "hidden" : "hidden lg:block cursor-pointer"
+                showBox || showNotification || message
+                  ? "hidden"
+                  : "hidden lg:block cursor-pointer"
               }`}
-              onClick={() =>{ setShowBox(true);setShowNotification(false)}}
+              onClick={() => {
+                setShowBox(true);
+                setShowNotification(false);
+                setMessage(false);
+              }}
             >
               SEARCH
             </span>
@@ -124,10 +151,18 @@ const Navbar = () => {
               <FontAwesomeIcon
                 icon={faCompass}
                 className={`${
-                  showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                  showBox || showNotification || message
+                    ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                    : "cursor-pointer"
                 }`}
               />
-              <span className={` ${showBox || showNotification ? "hidden" : "hidden lg:block"}`}>
+              <span
+                className={` ${
+                  showBox || showNotification || message
+                    ? "hidden"
+                    : "hidden lg:block"
+                }`}
+              >
                 EXPLORE
               </span>
             </li>
@@ -137,13 +172,27 @@ const Navbar = () => {
               <FontAwesomeIcon
                 icon={faEnvelope}
                 className={`${
-                  showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                  showBox || showNotification || message
+                    ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                    : "cursor-pointer"
                 }`}
+                onClick={() => {
+                  setMessage(true);
+                  setShowNotification(false);
+                  setShowBox(false);
+                }}
               />
               <span
                 className={` ${
-                  showBox || showNotification ? "hidden" : "hidden lg:block cursor-pointer"
+                  showBox || showNotification || message
+                    ? "hidden"
+                    : "hidden lg:block cursor-pointer"
                 }`}
+                onClick={() => {
+                  setMessage(true);
+                  setShowNotification(false);
+                  setShowBox(false);
+                }}
               >
                 MESSAGE
               </span>
@@ -153,15 +202,27 @@ const Navbar = () => {
             <FontAwesomeIcon
               icon={faBell}
               className={`${
-                showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                showBox || showNotification || message
+                  ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                  : "cursor-pointer"
               }`}
-              onClick={() =>{ setShowNotification(true);setShowBox(false)}}
+              onClick={() => {
+                setShowNotification(true);
+                setShowBox(false);
+                setMessage(false);
+              }}
             />
             <span
               className={` ${
-                showBox || showNotification ? "hidden" : "hidden lg:block cursor-pointer"
+                showBox || showNotification || message
+                  ? "hidden"
+                  : "hidden lg:block cursor-pointer"
               }`}
-              onClick={() =>{ setShowNotification(true);setShowBox(false)}}
+              onClick={() => {
+                setShowNotification(true);
+                setShowBox(false);
+                setMessage(false);
+              }}
             >
               NOTIFICATIONS
             </span>
@@ -171,10 +232,18 @@ const Navbar = () => {
               <FontAwesomeIcon
                 icon={faPlus}
                 className={`${
-                  showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                  showBox || showNotification || message
+                    ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                    : "cursor-pointer"
                 }`}
               />
-              <span className={` ${showBox || showNotification ? "hidden" : "hidden lg:block"}`}>
+              <span
+                className={` ${
+                  showBox || showNotification || message
+                    ? "hidden"
+                    : "hidden lg:block"
+                }`}
+              >
                 NEW POST
               </span>
             </li>
@@ -184,10 +253,18 @@ const Navbar = () => {
               <FontAwesomeIcon
                 icon={faUser}
                 className={`${
-                  showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                  showBox || showNotification || message
+                    ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                    : "cursor-pointer"
                 }`}
               />
-              <span className={` ${showBox || showNotification ? "hidden" : "hidden lg:block"}`}>
+              <span
+                className={` ${
+                  showBox || showNotification || message
+                    ? "hidden"
+                    : "hidden lg:block"
+                }`}
+              >
                 PROFILE
               </span>
             </li>
@@ -205,7 +282,9 @@ const Navbar = () => {
               />
               <span
                 className={` font-qwitcher-grypen ${
-                  showBox || showNotification ? " hidden" : "hidden lg:block text-lg "
+                  showBox || showNotification || message
+                    ? " hidden"
+                    : "hidden lg:block text-lg "
                 }`}
               >
                 {userDetails?.username}
@@ -217,19 +296,21 @@ const Navbar = () => {
               size={30}
               onClick={handleLogout}
               className={`${
-                showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
+                showBox || showNotification || message
+                  ? "sm:ml-2 lg:ml-7 cursor-pointer"
+                  : "cursor-pointer"
               }`}
             />
           </li>
           <li className="text-sm flex flex-row justify-center items-center sm:justify-normal mt-4 gap-x-3">
-          <ThemeToggle/>
+            <ThemeToggle />
           </li>
         </ul>
       </motion.div>
       <motion.div
         className="search-container flex-grow "
         initial={{ x: "100%" }}
-        animate={{ x: showBox || showNotification ? 0 : "100%" }}
+        animate={{ x: showBox || showNotification || message ? 0 : "100%" }}
         transition={{ duration: 0.5 }}
       >
         {showBox && <Search show={setShowBox} />}
@@ -238,12 +319,20 @@ const Navbar = () => {
       <motion.div
         className="search-container flex-grow "
         initial={{ x: "100%" }}
-        animate={{ x: showBox || showNotification ? 0 : "100%" }}
+        animate={{ x: showBox || showNotification || message ? 0 : "100%" }}
         transition={{ duration: 0.5 }}
       >
-            {showNotification && <Notification show={setShowNotification} />}
+        {message && <SearchUser show={setMessage} />}
       </motion.div>
 
+      <motion.div
+        className="search-container flex-grow "
+        initial={{ x: "100%" }}
+        animate={{ x: showBox || showNotification || message ? 0 : "100%" }}
+        transition={{ duration: 0.5 }}
+      >
+        {showNotification && <Notification show={setShowNotification} />}
+      </motion.div>
     </div>
   );
 };

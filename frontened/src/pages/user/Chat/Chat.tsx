@@ -11,10 +11,10 @@ const Chat = () => {
         <Navbar />
       </div>
 
-      <div className="w-1.5/4 rounded-3xl shadow-md mr-4 my-4  border-opacity-75  ">
+      {/* <div className="w-1.5/4 rounded-3xl shadow-md   border-opacity-75  ">
         <SearchUser />
-      </div>
-      <div className="flex flex-col w-3/4  rounded-3xl border-r-2  mr-4 my-4  border-opacity-75 border-l-2 justify-center items-center">
+      </div> */}
+      <div className="flex flex-col w-3/4  rounded-3xl border-r-2    border-opacity-75 border-l-2 justify-center items-center">
         <span className="">
           <TbMessages size={50} className="border rounded-2xl border-black" />
         </span>

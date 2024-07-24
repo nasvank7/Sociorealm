@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { axiosInstance } from "../../services/userApi/axiosInstance";
 import Header from "./micros/Header";
 import moment from "moment";
@@ -7,6 +7,7 @@ import Comment from "./micros/reactions/Comment";
 import Save from "./micros/reactions/Save";
 import Share from "./micros/reactions/Share";
 import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
+import { io, Socket } from "socket.io-client";
 
 interface User {
   _id: string;
@@ -31,10 +32,17 @@ interface FullPostProps {
 const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
   const userDetails = GetUsernameFromRedux();
   const [postDetailsFrom, setPostDetailsFrom] = useState<Post>(postDetails);
-  const [liked, setLiked] = useState<boolean>(postDetails?.likes?.includes(userDetails?._id || ""));
-  const [saved, setSaved] = useState<boolean>(postDetails?.saved?.includes(userDetails?._id || ""));
-  const [likesCount, setLikeCount] = useState<number>(postDetails?.likes?.length);
-
+  const [liked, setLiked] = useState<boolean>(
+    postDetails?.likes?.includes(userDetails?._id || "")
+  );
+  const [saved, setSaved] = useState<boolean>(
+    postDetails?.saved?.includes(userDetails?._id || "")
+  );
+  const [likesCount, setLikeCount] = useState<number>(
+    postDetails?.likes?.length
+  );
+  const socket = useRef<Socket | null>(null);
+  socket.current = io("http://localhost:3001");
   useEffect(() => {
     setPostDetailsFrom(postDetails);
     setLiked(postDetails?.likes?.includes(userDetails?._id || ""));
@@ -53,7 +61,17 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
       const response = await axiosInstance.patch("/liked", data);
       if (response.status === 200) {
         setLiked(newLikedState);
-        setLikeCount((prevCount) => (newLikedState ? prevCount + 1 : prevCount - 1));
+        setLikeCount((prevCount) =>
+          newLikedState ? prevCount + 1 : prevCount - 1
+        );
+        if (socket.current) {
+          socket.current.emit("likePost", {
+            postId: postDetailsFrom._id,
+            userId: userDetails?._id,
+            postUserId:postDetailsFrom.userId._id,
+            type: "like",
+          });
+        }
       }
     } catch (error) {
       console.error("Error liking the post:", error);
@@ -62,8 +80,8 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
 
   const handleSave = async (foo: boolean) => {
     const data = {
-      postId: postDetailsFrom?._id.toString(),  // Ensure it's a string
-      userId: userDetails?._id.toString(),     // Ensure it's a string
+      postId: postDetailsFrom?._id.toString(), // Ensure it's a string
+      userId: userDetails?._id.toString(), // Ensure it's a string
       value: foo,
     };
 
@@ -109,7 +127,11 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
       <div className="flex flex-row w-full space-x-6 flex-nowrap">
         <div className="flex justify-evenly w-1/2">
           <span>
-            <Like liked={liked} postDetails={postDetailsFrom} onLike={handleLike} />
+            <Like
+              liked={liked}
+              postDetails={postDetailsFrom}
+              onLike={handleLike}
+            />
           </span>
           <span>
             <Comment postDetails={postDetailsFrom} />
@@ -117,7 +139,11 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
         </div>
         <div className="flex justify-evenly w-1/2">
           <span className="py-2">
-            <Save saved={saved} postDetails={postDetailsFrom} onSave={handleSave} />
+            <Save
+              saved={saved}
+              postDetails={postDetailsFrom}
+              onSave={handleSave}
+            />
           </span>
           <span>
             <Share postDetails={postDetailsFrom} />
@@ -136,9 +162,7 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
             {postDetailsFrom?.description}
           </span>
         </div>
-        <span>
-          {moment(postDetailsFrom?.createdAt)?.fromNow()}
-        </span>
+        <span>{moment(postDetailsFrom?.createdAt)?.fromNow()}</span>
       </div>
     </div>
   );

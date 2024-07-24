@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../services/userApi/axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { BsHeartFill } from "react-icons/bs";
 
 interface Post {
   _id: string;
@@ -10,39 +11,49 @@ interface Post {
     username: string;
   };
   description: string;
-  likes: string;
+  likes: string[]; // Array of user IDs who liked the post
   image: string;
   saved: string;
-  // Assuming "image" is a URL
 }
 
 const Explores = () => {
   const nav = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [hoveredPostId, setHoveredPostId] = useState<string | null>(null);
+
   useEffect(() => {
     axiosInstance.get("/getPost").then((res) => {
-      console.log(res.data, "helooooooooooo the post is here");
-      console.log(res.data.description);
+      console.log(res.data, "hello the post is here");
       setPosts(res.data.data);
     });
   }, []);
 
   return (
     <div className="grid lg:grid-cols-4 grid-cols-4 p-4">
-      {posts?.map((post: any) => (
+      {posts?.map((post) => (
         <motion.div
           key={post._id}
-          transition={{ duration: 0.5 }}
-          className="card w-full p-2"
+          className="card w-full flex items-start justify-start relative"
           onClick={() => nav(`/post/${post._id}`)}
+          onHoverStart={() => setHoveredPostId(post._id)}
+          onHoverEnd={() => setHoveredPostId(null)}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
         >
           <motion.img
             src={post.image}
             alt=""
-            className="w-[250px] h-[400px] object-contain"
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.5 }}
+            className="w-[250px] h-[400px] object-contain "
+            initial={{ filter: "blur(0px)" }}
+            whileHover={{ filter: "blur(4px)" }}
+            transition={{ duration: 0.3 }}
           />
+          {hoveredPostId === post._id && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center space-x-2  bg-opacity-75 rounded-full p-2 transition-opacity duration-300">
+              <BsHeartFill className="text-white mr-1" />
+              <span className="font-bold text-white">{post.likes.length}</span>
+            </div>
+          )}
         </motion.div>
       ))}
     </div>

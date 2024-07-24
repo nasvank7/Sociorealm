@@ -44,6 +44,12 @@ io.on("connection", (socket) => {
     io.to(message.userId).emit("receive_message", message);
   });
 
+  socket.on("likePost",(newNotification)=>{
+    console.log(newNotification);
+
+    io.to(newNotification.postUserId).emit("notification",newNotification)
+  })
+
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });

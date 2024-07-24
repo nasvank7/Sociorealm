@@ -112,12 +112,12 @@ const Chat = () => {
         <Navbar />
       </div>
 
-      <div className="w-1.5/4 rounded-3xl border mr-4 my-4  border-opacity-75">
+      {/* <div className="w-1.5/4 rounded-3xl border mr-4 my-4  border-opacity-75">
         <SearchUser />
-      </div>
+      </div> */}
 
       <div className="w-3/4  rounded-3xl border mr-4 my-4 border-opacity-75 border-l-2">
-        <div className="h-full relative flex flex-col">
+        <div className="h-full  flex flex-col">
           <div className="h-16 mt-2 mx-2  border rounded-xl flex flex-row items-center  gap-x-4 bg-gray-400">
             <div>
               <img
@@ -131,7 +131,7 @@ const Chat = () => {
             </div>
           </div>
 
-          <div className="chat-container flex flex-col justify-between h-full">
+          <div className="chat-container flex flex-col justify-between h-full pb-14 ">
             <div className="messages flex flex-col w-full  overflow-y-auto p-4 space-y-4">
               {messages.map((msg, index) => (
                 <div

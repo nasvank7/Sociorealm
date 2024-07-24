@@ -19,7 +19,6 @@ interface Post {
   createdAt: string;
 }
 
-
 interface Story {
   username: string;
   story: string;
@@ -84,46 +83,41 @@ const HomeComponents = () => {
   }, [countdown]);
 
   const storyModal = () => {
+    const handleClickOutside = (e: any) => {
+      if (e.target.classList.contains("modal-overlay")) {
+        closeStoryModal();
+      }
+    };
     if (!storyModalOpen) return null;
 
     return (
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-100 p-4 rounded-lg shadow-lg w-[300px] z-50">
-        <div className="relative">
-          {/* Progress bar */}
-          <div className="h-1 bg-gray-200 rounded-lg w-full overflow-hidden">
-            <div
-              className="h-1 bg-blue-500"
-              style={{
-                width: `${(countdown / 30) * 100}%`,
-                transformOrigin: "left",
-                transform: "scaleX(1)",
-              }}
-            ></div>
+      <div
+        className="fixed top-0 left-0 w-full h-full flex items-center justify-center modal-overlay"
+        onClick={handleClickOutside}
+      >
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-100 p-4 rounded-lg shadow-lg w-[300px] z-50">
+          <div className="relative">
+            {/* Progress bar */}
+            <div className="h-1 bg-gray-200 rounded-lg w-full overflow-hidden">
+              <div
+                className="h-1 bg-blue-500"
+                style={{
+                  width: `${(countdown / 30) * 100}%`,
+                  transformOrigin: "left",
+                  transform: "scaleX(1)",
+                }}
+              ></div>
+            </div>
           </div>
-          {/* <button
-            className="absolute top-0 right-0 m-2 p-2 rounded-full bg-gray-300 hover:bg-gray-400"
-            onClick={closeStoryModal}
-          >
-            &times;
-          </button> */}
-        </div>
 
-        <div className="text-center mt-4">
-          <img
-            src={images}
-            alt=""
-            className="h-full object-contain rounded w-full"
-          />
+          <div className="text-center mt-4">
+            <img
+              src={images}
+              alt=""
+              className="h-full object-contain rounded w-full"
+            />
+          </div>
         </div>
-
-        {/* <div className="text-center mt-4">
-          <button
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-            onClick={closeStoryModal}
-          >
-            Close
-          </button>
-        </div> */}
       </div>
     );
   };
@@ -131,36 +125,39 @@ const HomeComponents = () => {
   return (
     <div className="container mx-auto">
       {storyModal()}
-      {stories.length > 0 && (<>
-        <section className="flex flex-row overflow-x-auto mt-2 ">
-          {stories.map((story, index) => (
-            <div
-              key={index}
-              className="w-24 h-24 flex-shrink-0 flex flex-col items-center m-2"
-            >
-              {story.story.length > 0 && (
-                <>
-                  <div
-                    onClick={() => {
-                      openStoryModal(); setImage(story.story);
-                    }}
-                    className="w-20 h-20 rounded-full border-2 border-blue-500 overflow-hidden cursor-pointer"
-                  >
-                    <img
-                      src={story.story}
-                      alt={story.username}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <p className="text-xs mt-1 text-center font-semibold">
-                    {story.username}
-                  </p>
-                </>
-              )}
-            </div>
-          ))}
-        </section>
-      </>)}
+      {stories.length > 0 && (
+        <>
+          <section className="flex flex-row overflow-x-auto mt-2 ">
+            {stories.map((story, index) => (
+              <div
+                key={index}
+                className="w-24 h-24 flex-shrink-0 flex flex-col items-center m-2"
+              >
+                {story.story.length > 0 && (
+                  <>
+                    <div
+                      onClick={() => {
+                        openStoryModal();
+                        setImage(story.story);
+                      }}
+                      className="w-20 h-20 rounded-full border-2 border-blue-500 overflow-hidden cursor-pointer"
+                    >
+                      <img
+                        src={story.story}
+                        alt={story.username}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <p className="text-xs mt-1 text-center font-semibold">
+                      {story.username}
+                    </p>
+                  </>
+                )}
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
       <section className="flex flex-col w-full justify-center items-center mt-4">
         {posts.length !== 0 ? (

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Register from "./pages/user/Register/Register";
@@ -25,18 +25,53 @@ import { useSelector } from "react-redux";
 import RootState from "./services/redux/Store/rooteState";
 import { ThemeState } from "./services/redux/slices/themeSlice";
 import ThemeToggle from "./pages/Theme/ThemeToggle";
+import { io, Socket } from "socket.io-client";
+import { GetUsernameFromRedux } from "./services/redux/UserinRedux";
 
 const App: React.FC = () => {
   const themeMode = useSelector((state: RootState) => state.theme.mode);
+  const userDetails = GetUsernameFromRedux();
   console.log({ themeMode });
+  const socket = useRef<Socket | null>(null);
+  useEffect(() => {
+    socket.current = io("http://localhost:3001");
 
+    socket.current.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.current.on("connect_error", (error) => {
+      console.error("Connection error:", error);
+    });
+
+    if (userDetails?._id) {
+      socket.current.emit("joinChat", { userId: userDetails?._id });
+    }
+
+    // socket.current.on("receive_message", (message) => {
+    //   console.log("Received message:", message);
+    //   setMessages((prevMessages) => [...prevMessages, { myself: false, message: message.content }]);
+    // });
+
+    // Listen for any errors
+    socket.current.on("error", (error) => {
+      console.error("Socket error:", error);
+    });
+
+    return () => {
+      socket.current?.disconnect();
+      console.log("Disconnected from socket server");
+    };
+  }, [ userDetails]);
   return (
     <>
       <div
         className={`App ${themeMode === "dark" ? "dark:bg-dark" : ""}`}
-        style={{ backgroundColor: themeMode === "dark" ? "black" : "white" ,color: themeMode === "dark" ? "white" : "black"}}
+        style={{
+          backgroundColor: themeMode === "dark" ? "black" : "white",
+          color: themeMode === "dark" ? "white" : "black",
+        }}
       >
-        
         <BrowserRouter>
           <Routes>
             <Route path="/signup" element={<Register />} />

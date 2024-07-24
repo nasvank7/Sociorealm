@@ -7,7 +7,10 @@ import { io, Socket } from "socket.io-client";
 import { debounce } from "lodash";
 import { BsChatLeftTextFill } from "react-icons/bs";
 import AddChatModal from "./addChatModal";
-const SearchUser = () => {
+interface ShowProps {
+  show: (isVisible: boolean) => void;
+}
+const SearchUser:React.FC<ShowProps> = ({show}) => {
   const nav = useNavigate();
   const userDetails = GetUsernameFromRedux();
   const [users, setUsers] = useState<any[]>([]);
@@ -95,7 +98,7 @@ const SearchUser = () => {
   };
 
   return (
-    <div className="h-full  overflow-y-auto">
+    <div className="w-full h-full  overflow-y-auto border border-gray-100">
       <div className="w-full flex items-end justify-end ">
         <div className="w-full  flex items-center justify-end h-10 px-4">
           <BsChatLeftTextFill onClick={() => setShowSearchModal(true)} />
