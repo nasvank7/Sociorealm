@@ -5,19 +5,22 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
+interface User {
+  _id: string;
+  username: string;
+  image: string;
+}
+
 interface Post {
   _id: string;
-  userId: {
-    id: string;
-    username: string;
-    image: string;
-  };
+  userId: User;
   description: string;
-  likes: string;
+  likes: string[];
   image: string;
-  saved: string;
+  saved: string[];
   createdAt: string;
 }
+
 interface UserProfile {
   _id: string;
   username: string;
