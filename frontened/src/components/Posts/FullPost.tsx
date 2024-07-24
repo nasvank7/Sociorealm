@@ -1,134 +1,93 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { axiosInstance } from "../../services/userApi/axiosInstance";
 import Header from "./micros/Header";
 import moment from "moment";
-
 import Like from "./micros/reactions/Like";
 import Comment from "./micros/reactions/Comment";
 import Save from "./micros/reactions/Save";
 import Share from "./micros/reactions/Share";
 import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
-import { toast } from "react-toastify";
+
+interface User {
+  _id: string;
+  username: string;
+  image: string;
+}
 
 interface Post {
   _id: string;
-  userId: {
-    id: string;
-    username: string;
-    image: string;
-  };
+  userId: User;
   description: string;
-  likes: string;
+  likes: string[];
   image: string;
-  saved: string;
+  saved: string[];
   createdAt: string;
 }
 
 interface FullPostProps {
   postDetails: Post;
 }
+
 const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
   const userDetails = GetUsernameFromRedux();
-  const [postDetailsfrom, setPostDetailsFrom] = useState({
-    _id: "",
-    userId: {
-      id: "",
-      username: "",
-      image: "",
-    },
-    description: "",
-    likes: "",
-    image: "",
-    saved: "",
-    createdAt: "",
-  });
+  const [postDetailsFrom, setPostDetailsFrom] = useState<Post>(postDetails);
+  const [liked, setLiked] = useState<boolean>(postDetails?.likes?.includes(userDetails?._id || ""));
+  const [saved, setSaved] = useState<boolean>(postDetails?.saved?.includes(userDetails?._id || ""));
+  const [likesCount, setLikeCount] = useState<number>(postDetails?.likes?.length);
+
   useEffect(() => {
     setPostDetailsFrom(postDetails);
-  }, [postDetails]);
-  const likesArray = postDetailsfrom.likes
-    ? Array.isArray(postDetailsfrom.likes)
-      ? postDetailsfrom.likes.join(",")
-      : postDetailsfrom.likes.split(",")
-    : [];
-
-  const userId = userDetails ? userDetails._id : "";
-  const likeStatus = userId ? likesArray.includes(userId) : undefined;
-  const saveStatus = postDetailsfrom.saved?.includes(userId) ?? false;
-  const [liked, setLiked] = useState(likeStatus);
-  const [saved, setSaved] = useState(saveStatus);
-  const [likesCount, setLikeCount] = useState(0);
-
-  useEffect(() => {
+    setLiked(postDetails?.likes?.includes(userDetails?._id || ""));
+    setSaved(postDetails?.saved?.includes(userDetails?._id || ""));
     setLikeCount(postDetails?.likes?.length);
-  }, [postDetails]);
-  let width = "600";
-  let dp,
-    desc = "";
-  if (width === "600") {
-    dp = "text-xl";
-    desc = "text-lg";
-  }
+  }, [postDetails, userDetails]);
 
-  const handleLike = async (foo: any) => {
+  const handleLike = async (newLikedState: boolean) => {
     const data = {
-      postId: postDetailsfrom?._id || "",
-      userId: userDetails?._id || "",
-      value: foo,
+      postId: postDetailsFrom._id,
+      userId: userDetails?._id,
+      value: newLikedState,
     };
-    console.log(data, "THIS IS DATA");
-    console.log(postDetailsfrom);
+
     try {
-      setLiked(foo);
-      if (foo) {
-        setLikeCount(likesCount + 1);
-      } else {
-        if (likesCount !== 0) {
-          setLikeCount(likesCount - 1);
-        }
-      }
       const response = await axiosInstance.patch("/liked", data);
       if (response.status === 200) {
-        setLiked(foo);
-        if (foo) {
-          setLikeCount(likesCount + 1);
-        } else {
-          if (likesCount !== 0) {
-            setLikeCount(likesCount - 1);
-          }
-        }
+        setLiked(newLikedState);
+        setLikeCount((prevCount) => (newLikedState ? prevCount + 1 : prevCount - 1));
       }
     } catch (error) {
-      setLiked(!foo);
-      console.log(error);
+      console.error("Error liking the post:", error);
     }
   };
 
-  const handleSave = async (foo: any) => {
+  const handleSave = async (foo: boolean) => {
     const data = {
-      postId: postDetailsfrom._id,
-      userId: userDetails?._id,
+      postId: postDetailsFrom?._id.toString(),  // Ensure it's a string
+      userId: userDetails?._id.toString(),     // Ensure it's a string
       value: foo,
     };
+
     try {
-      setSaved(foo);
-      await axiosInstance.patch("/save", data);
-    } catch (error) {}
+      const response = await axiosInstance.patch("/save", data);
+      if (response.status === 200) {
+        setSaved(foo);
+      }
+    } catch (error) {
+      console.error("Error saving the post:", error);
+    }
   };
-  const headerUsername = postDetailsfrom?.userId?.username || "";
-  const headerImage = postDetailsfrom?.userId?.image || "";
 
   return (
     <div
-      id={postDetailsfrom._id}
-      className="  border w-full max-w-[350px] flex flex-col border-solid mt-2 rounded-xl shadow-md"
-      key={postDetailsfrom._id}
+      id={postDetailsFrom._id}
+      className="border w-full max-w-[350px] flex flex-col border-solid mt-2 rounded-xl shadow-md"
+      key={postDetailsFrom._id}
     >
       <div className="flex flex-row justify-evenly">
         <Header
-          username={headerUsername}
-          image={headerImage}
-          postDetails={postDetailsfrom}
+          username={postDetailsFrom?.userId?.username}
+          image={postDetailsFrom?.userId?.image}
+          postDetails={postDetailsFrom}
         />
       </div>
       <div className="flex justify-between items-center">
@@ -140,28 +99,28 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
       <div className="mt-2 flex justify-between mx-4">
         <div className="flex justify-between gap-3">
           <img
-            src={postDetailsfrom.image}
+            src={postDetailsFrom?.image}
             alt="Post"
             className="w-[20rem] h-[30rem] object-contain rounded-lg"
           />
         </div>
       </div>
 
-      <div className="flex flex-row w-full   space-x-6 flex-nowrap">
-        <div className="flex justify-evenly w-1/2 ">
-          <span onClick={() => handleLike(!liked)}>
-            <Like liked={liked} />
+      <div className="flex flex-row w-full space-x-6 flex-nowrap">
+        <div className="flex justify-evenly w-1/2">
+          <span>
+            <Like liked={liked} postDetails={postDetailsFrom} onLike={handleLike} />
           </span>
           <span>
-            <Comment postDetails={postDetailsfrom} />
+            <Comment postDetails={postDetailsFrom} />
           </span>
         </div>
-        <div className="flex justify-evenly w-1/2 ">
-          <span className="py-2" onClick={() => handleSave(!saved)}>
-            <Save saved={saved} />
+        <div className="flex justify-evenly w-1/2">
+          <span className="py-2">
+            <Save saved={saved} postDetails={postDetailsFrom} onSave={handleSave} />
           </span>
           <span>
-            <Share postDetails={postDetailsfrom} />
+            <Share postDetails={postDetailsFrom} />
           </span>
         </div>
       </div>
@@ -172,13 +131,13 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
           </span>
         </div>
         <div className="pb-4 flex">
-          <span className="font-bold">{postDetailsfrom.userId?.username}</span>
+          <span className="font-bold">{postDetailsFrom?.userId?.username}</span>
           <span className="cursor-pointer select-none ml-10 font-semibold">
-            {postDetailsfrom?.description}
+            {postDetailsFrom?.description}
           </span>
         </div>
         <span>
-          {moment(postDetailsfrom?.createdAt ?? "20-08-2023").fromNow()}
+          {moment(postDetailsFrom?.createdAt)?.fromNow()}
         </span>
       </div>
     </div>
