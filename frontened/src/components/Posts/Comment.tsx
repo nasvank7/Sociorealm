@@ -3,17 +3,22 @@ import { IoArrowBackCircle } from "react-icons/io5";
 import { AiOutlineSend } from "react-icons/ai";
 import { GetUsernameFromRedux } from '../../services/redux/UserinRedux';
 import { axiosInstance } from '../../services/userApi/axiosInstance';
-interface CommentProps{
+
+interface CommentProps {
+ 
     _id: string;
-    userId:{
-      id:string;
-      username:string
-    }
+    userId: {
+      _id: string; // Adjust this to match Post type
+      username: string;
+      image: string;
+    };
     description: string;
-    likes: string;
+    likes: string[];
     image: string;
-    
-  }
+    saved: string[];
+    createdAt: string;
+  
+}
   interface FullPostProps {
     post: CommentProps;
     show: (isVisible: boolean) => void;
