@@ -4,19 +4,22 @@ import { Flip, ToastContainer, toast } from "react-toastify";
 import { AiOutlineSend } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from '../../services/userApi/axiosInstance';
+interface User {
+  _id: string;
+  username: string;
+  image: string;
+}
+
 interface Post {
   _id: string;
-  userId: {
-    id: string;
-    username: string;
-    image:string;
-  };
+  userId: User;
   description: string;
-  likes: string;
+  likes: string[];
   image: string;
-  saved:string;
-  createdAt:string
+  saved: string[];
+  createdAt: string;
 }
+
 interface showProps {
     show: (isVisible: boolean) => void;
     user: boolean;
