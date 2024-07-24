@@ -5,17 +5,19 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { axiosInstance } from "../../services/userApi/axiosInstance";
 import FullPost from "../Posts/FullPost";
+interface User {
+  _id: string;
+  username: string;
+  image: string;
+}
+
 interface Post {
   _id: string;
-  userId: {
-    id: string;
-    username: string;
-    image: string;
-  };
+  userId: User;
   description: string;
-  likes: string;
+  likes: string[];
   image: string;
-  saved: string;
+  saved: string[];
   createdAt: string;
 }
 const ProfileBar = () => {
@@ -228,7 +230,7 @@ const ProfileBar = () => {
                 </h1>
                 <h1 className="font-semibold text-xl">ADS</h1>
               </div>
-              <div className="grid md:grid-cols-1 grid-cols-1 p-4 mt-10 py-10 border-t border-blueGray-200 text-center">
+              <div className="grid md:grid-cols-1 grid-cols-1 lg:grid-cols-3 p-4 mt-10 py-10 border-t border-blueGray-200 text-center">
                 {showSaved ? (
                   savedpost.length !== 0 ? (
                     savedpost.map((post1, index, array) => {
