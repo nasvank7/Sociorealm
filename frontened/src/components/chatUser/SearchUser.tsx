@@ -5,13 +5,16 @@ import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
 import { Link, useNavigate } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { debounce } from "lodash";
-
+import { BsChatLeftTextFill } from "react-icons/bs";
+import AddChatModal from "./addChatModal";
 const SearchUser = () => {
   const nav = useNavigate();
   const userDetails = GetUsernameFromRedux();
   const [users, setUsers] = useState<any[]>([]);
   const [searchUser, setSearchUser] = useState("");
   const [filteredUser, setFilteredUser] = useState<any[]>([]);
+  const [allChats, setAllChats] = useState<any[]>([])
+  const [searchModal, setShowSearchModal] = useState<boolean>(false)
   const socket = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -60,8 +63,8 @@ const SearchUser = () => {
   console.log({ searchUser });
   console.log({ filteredUser });
 
-  const joinChat=(userId:string)=>{
-    if(socket.current){
+  const joinChat = (userId: string) => {
+    if (socket.current) {
       // socket.current.emit('joinChat',{userId});
       nav(`/chatuser/${userId}`);
     }
@@ -71,9 +74,34 @@ const SearchUser = () => {
     handleSearch(searchUser);
   }, [searchUser, handleSearch]);
 
+  useEffect(() => {
+    const fetchAllChats = async () => {
+      try {
+        const response = await axiosInstance.post(`getAllChatsOfuser`, {
+          userId: userDetails?._id
+        })
+        if (Array.isArray(response?.data)) {
+          setAllChats(response?.data)
+        }
+      } catch (error) {
+
+      }
+    }
+    fetchAllChats()
+  }, [userDetails?._id])
+  
+  const handleCloseModal = () => {
+    setShowSearchModal(false);
+  };
+
   return (
     <div className="h-full  overflow-y-auto">
-      <div className="flex justify-center">
+      <div className="w-full flex items-end justify-end ">
+        <div className="w-full  flex items-center justify-end h-10 px-4">
+          <BsChatLeftTextFill onClick={() => setShowSearchModal(true)} />
+        </div>
+      </div>
+      {/* <div className="flex justify-center">
         <div className="mt-4 px-3 flex-col relative">
           <input
             value={searchUser}
@@ -87,38 +115,71 @@ const SearchUser = () => {
             size={20}
           />
         </div>
-      </div>
-      {searchUser &&
+      </div> */}
+      {/* {searchUser &&
         filteredUser.length >
-          0 && (
-            <>
-              {filteredUser.map((user) => (
-                <div
-                  className="flex flex-row border justify-between items-center p-2 rounded-xl border-solid border-gray-300 shadow-md mt-5 mx-2 "
-                  key={user._id}
-                >
-                  <div>
-                    <img
-                      src={user.image}
-                      alt=""
-                      className="w-10 h-10 rounded-full items-center justify-center"
-                    />
-                  </div>
-                  <div className="flex">
-                    <p className="font-semibold mt-1 ml-2">{user.username}</p>
-                  </div>
-                  <div>
-                    <p className="mt-1 justify-end items-center flex ml-6">
-                      <BsFillChatSquareTextFill
-                        className="cursor-pointer"
-                        onClick={() => joinChat(user._id)}
-                      />
-                    </p>
-                  </div>
+        0 && (
+          <>
+            {filteredUser.map((user) => (
+              <div
+                className="flex flex-row border justify-between items-center p-2 rounded-xl border-solid border-gray-300 shadow-md mt-5 mx-2 "
+                key={user._id}
+              >
+                <div>
+                  <img
+                    src={user.image}
+                    alt=""
+                    className="w-10 h-10 rounded-full items-center justify-center"
+                  />
                 </div>
-              ))}
+                <div className="flex">
+                  <p className="font-semibold mt-1 ml-2">{user.username}</p>
+                </div>
+                <div>
+                  <p className="mt-1 justify-end items-center flex ml-6">
+                    <BsFillChatSquareTextFill
+                      className="cursor-pointer"
+                      onClick={() => joinChat(user._id)}
+                    />
+                  </p>
+                </div>
+              </div>
+            ))}
+          </>
+        )} */}
+      {
+        allChats.length > 0 && (<>
+          {allChats.map((user) => (
+            <>
+              <div
+                className="flex flex-row border justify-between items-center p-2 rounded-xl border-solid border-gray-300 shadow-md mt-5 mx-2 "
+                key={user._id}
+              >
+                <div>
+                  <img
+                    src={user.image}
+                    alt=""
+                    className="w-10 h-10 rounded-full items-center justify-center"
+                  />
+                </div>
+                <div className="flex">
+                  <p className="font-semibold mt-1 ml-2">{user.username}</p>
+                </div>
+                <div>
+                  <p className="mt-1 justify-end items-center flex ml-6">
+                    <BsFillChatSquareTextFill
+                      className="cursor-pointer"
+                      onClick={() => joinChat(user._id)}
+                    />
+                  </p>
+                </div>
+              </div>
             </>
-          )}
+          ))}
+
+        </>)
+      }
+      {searchModal && <AddChatModal onClose={handleCloseModal} />}
     </div>
   );
 };
