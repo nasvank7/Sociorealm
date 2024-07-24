@@ -108,13 +108,13 @@ const Navbar = () => {
               className={`${
                 showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
               }`}
-              onClick={() =>{ setShowBox(true),setShowNotification(false)}}
+              onClick={() =>{ setShowBox(true);setShowNotification(false)}}
             />
             <span
               className={` ${
                 showBox || showNotification ? "hidden" : "hidden lg:block cursor-pointer"
               }`}
-              onClick={() =>{ setShowBox(true),setShowNotification(false)}}
+              onClick={() =>{ setShowBox(true);setShowNotification(false)}}
             >
               SEARCH
             </span>
@@ -155,13 +155,13 @@ const Navbar = () => {
               className={`${
                 showBox || showNotification ? "sm:ml-2 lg:ml-7 cursor-pointer" : "cursor-pointer"
               }`}
-              onClick={() =>{ setShowNotification(true),setShowBox(false)}}
+              onClick={() =>{ setShowNotification(true);setShowBox(false)}}
             />
             <span
               className={` ${
                 showBox || showNotification ? "hidden" : "hidden lg:block cursor-pointer"
               }`}
-              onClick={() =>{ setShowNotification(true),setShowBox(false)}}
+              onClick={() =>{ setShowNotification(true);setShowBox(false)}}
             >
               NOTIFICATIONS
             </span>
