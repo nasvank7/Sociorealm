@@ -3,19 +3,22 @@ import FullPost from "../Posts/FullPost";
 import { axiosInstance } from "../../services/userApi/axiosInstance";
 // import "./Modal.css"; // Import your CSS for modal styles
 
+interface User {
+  _id: string;
+  username: string;
+  image: string;
+}
+
 interface Post {
   _id: string;
-  userId: {
-    id: string;
-    username: string;
-    image: string;
-  };
+  userId: User;
   description: string;
-  likes: string;
+  likes: string[];
   image: string;
-  saved: string;
+  saved: string[];
   createdAt: string;
 }
+
 
 interface Story {
   username: string;
@@ -128,34 +131,37 @@ const HomeComponents = () => {
   return (
     <div className="container mx-auto">
       {storyModal()}
-      <section className="flex flex-row overflow-x-auto mt-2 bg-gray-200">
-        {stories.map((story, index) => (
-          <div
-            key={index}
-            className="w-24 h-24 flex-shrink-0 flex flex-col items-center m-2"
-          >
-            {story.story.length > 0 && (
-              <>
-                <div
-                  onClick={() => {
-                    openStoryModal(), setImage(story.story);
-                  }}
-                  className="w-20 h-20 rounded-full border-2 border-blue-500 overflow-hidden cursor-pointer"
-                >
-                  <img
-                    src={story.story}
-                    alt={story.username}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <p className="text-xs mt-1 text-center text-white">
-                  {story.username}
-                </p>
-              </>
-            )}
-          </div>
-        ))}
-      </section>
+      {stories.length > 0 && (<>
+        <section className="flex flex-row overflow-x-auto mt-2 ">
+          {stories.map((story, index) => (
+            <div
+              key={index}
+              className="w-24 h-24 flex-shrink-0 flex flex-col items-center m-2"
+            >
+              {story.story.length > 0 && (
+                <>
+                  <div
+                    onClick={() => {
+                      openStoryModal(); setImage(story.story);
+                    }}
+                    className="w-20 h-20 rounded-full border-2 border-blue-500 overflow-hidden cursor-pointer"
+                  >
+                    <img
+                      src={story.story}
+                      alt={story.username}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-xs mt-1 text-center font-semibold">
+                    {story.username}
+                  </p>
+                </>
+              )}
+            </div>
+          ))}
+        </section>
+      </>)}
+
       <section className="flex flex-col w-full justify-center items-center mt-4">
         {posts.length !== 0 ? (
           posts.map((post, index) => (
