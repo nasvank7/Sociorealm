@@ -275,8 +275,8 @@ const Navbar = () => {
                 src={userDetails?.image ? userDetails.image : "/avatar.jpg"}
                 className={`${
                   showBox
-                    ? "ml-4 rounded-full w-10 h-10 object-contain"
-                    : "rounded-full w-10 h-10 object-contain"
+                    ? "ml-4 rounded-full w-10 h-10 object-fill"
+                    : "rounded-full w-10 h-10 object-fill"
                 }`}
                 alt=""
               />
