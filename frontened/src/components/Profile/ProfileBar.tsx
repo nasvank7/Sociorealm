@@ -102,7 +102,7 @@ const ProfileBar = () => {
                   <img
                     alt="..."
                     src={username?.image}
-                    className="shadow-xl rounded-full object-contain  h-32 w-32 align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px "
+                    className="shadow-xl rounded-full object-fill  h-32 w-32 align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px "
                   />
                 </div>
               </div>
@@ -230,7 +230,7 @@ const ProfileBar = () => {
                 </h1>
                 <h1 className="font-semibold text-xl">ADS</h1>
               </div>
-              <div className="grid md:grid-cols-1 grid-cols-1 lg:grid-cols-3 p-4 mt-10 py-10 border-t border-blueGray-200 text-center">
+              <div className="grid md:grid-cols-1 grid-cols-1 lg:grid-cols-2 p-4 mt-10 py-10 border-t border-blueGray-200 text-center">
                 {showSaved ? (
                   savedpost.length !== 0 ? (
                     savedpost.map((post1, index, array) => {
