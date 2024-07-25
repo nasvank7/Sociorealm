@@ -44,10 +44,19 @@ io.on("connection", (socket) => {
     io.to(message.userId).emit("receive_message", message);
   });
 
-  socket.on("likePost",(newNotification)=>{
+  socket.on("likePost", (newNotification) => {
     console.log(newNotification);
 
-    io.to(newNotification.postUserId).emit("notification",newNotification)
+    socket.in(newNotification?.postId?._id).emit("notification", newNotification)
+    console.log("test");
+
+  })
+  socket.on("postComment", (newNotification) => {
+    console.log(newNotification);
+
+    socket.in(newNotification?.postId?._id).emit("notificationComment", newNotification)
+    console.log("test");
+
   })
 
   socket.on("disconnect", () => {
