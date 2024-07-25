@@ -32,6 +32,9 @@ const Notification: React.FC<showProps> = ({ show }) => {
   const socket = useRef<Socket | null>(null);
   socket.current = io("http://localhost:3001");
 
+
+
+
   const [notification, setNotification] = useState<Notification[]>([]);
   useEffect(() => {
     // const socket = io("http://localhost:5000"); // Replace with your backend URL
@@ -39,9 +42,22 @@ const Notification: React.FC<showProps> = ({ show }) => {
     // // Join room based on user ID
     // socket.emit("join", user?._id);
 
+
+
     // Listen for incoming notifications
     if (socket.current) {
+      if (user?._id) {
+        socket.current.emit("joinChat", { userId: user?._id });
+      }
       socket.current.on("notification", (newNotification) => {
+        console.log("New notification received:", newNotification);
+        // Add new notification to state
+        setNotification((prevNotifications) => [
+          ...prevNotifications,
+          newNotification,
+        ]);
+      });
+      socket.current.on("notificationComment", (newNotification) => {
         console.log("New notification received:", newNotification);
         // Add new notification to state
         setNotification((prevNotifications) => [
@@ -54,7 +70,7 @@ const Notification: React.FC<showProps> = ({ show }) => {
     // return () => {
     //   socket.current.disconnect(); // Clean up socket connection
     // };
-  },[user]);
+  }, [user?._id]);
   useEffect(() => {
     axiosInstance.get(`/notification/${user?._id}`).then((res) => {
       console.log(res, "notification response");
@@ -70,11 +86,11 @@ const Notification: React.FC<showProps> = ({ show }) => {
   };
   return (
     <>
-      <div
-        className="fixed top-0 left-0 right-0 bottom-0 z-10"
+      {/* <div
+        className="fixed top-0 left-0 right-0 bottom-0 "
         onClick={() => show(false)}
-      ></div>
-      <div className="h-full w-[17rem] bg-gray-900 py-4  shadow-2xl border-l-4   border-r-4   border-zinc-950 rounded-lg  z-20">
+      ></div> */}
+      <div className="h-full w-[17rem] bg-gray-900 py-4  shadow-2xl border-l-4   border-r-4   border-zinc-950 rounded-lg  z-20 overflow-y-auto">
         <div className="flex justify-center w-ful">
           <h1 className="text-white">Notifications</h1>
         </div>
@@ -108,7 +124,7 @@ const Notification: React.FC<showProps> = ({ show }) => {
                 </p>
               )}
               <img
-                src={notification.postId.image}
+                src={notification?.postId?.image}
                 className="w-10 h-10 rounded-xl"
                 alt="post"
               />
