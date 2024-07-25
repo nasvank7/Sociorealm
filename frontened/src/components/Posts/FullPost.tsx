@@ -66,9 +66,18 @@ const FullPost: React.FC<FullPostProps> = ({ postDetails }) => {
         );
         if (socket.current) {
           socket.current.emit("likePost", {
-            postId: postDetailsFrom._id,
+            postId: {
+              _id: postDetailsFrom.userId._id,
+              description: postDetailsFrom.description,
+              image: postDetailsFrom.image
+            },
             userId: userDetails?._id,
-            postUserId:postDetailsFrom.userId._id,
+            senderId: {
+              _id: userDetails?._id,
+              username: userDetails?.username,
+              image: userDetails?.image,
+              // Other properties of senderId
+            },
             type: "like",
           });
         }
