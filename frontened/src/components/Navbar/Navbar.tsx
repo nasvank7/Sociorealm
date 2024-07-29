@@ -79,8 +79,8 @@ const Navbar = () => {
       <motion.div
         className={`${
           showBox || showNotification || message
-            ? "sm:w-[40%] lg:w-[20%] navbar h-full  flex flex-col items-center justify-center"
-            : "w-[100%] navbar h-full  flex flex-col items-center justify-center"
+            ? "hidden lg:block lg:w-[20%] navbar h-full  flex flex-col items-center justify-center"
+            : "hidden lg:block w-[100%] navbar h-full  flex flex-col items-center justify-center"
         }`}
         transition={{ duration: 0.5 }}
       >
@@ -307,8 +307,52 @@ const Navbar = () => {
           </li>
         </ul>
       </motion.div>
+        {/* Fixed bottom bar for smaller screens */}
+        <div className={`lg:hidden fixed bottom-0 w-full bg-gray-100 border-t border-gray-300 flex justify-around items-center p-2 z-50${showBox || showNotification || message ? "hidden" : ""}`}>
+        <Link to="/">
+          <FontAwesomeIcon icon={faHome} size="lg" />
+        </Link>
+        <FontAwesomeIcon
+          icon={faSearch}
+          size="lg"
+          onClick={() => {
+            setShowBox(true);
+            setShowNotification(false);
+            setMessage(false);
+          }}
+        />
+        <Link to="/explore">
+          <FontAwesomeIcon icon={faCompass} size="lg" />
+        </Link>
+        <Link to="/chat">
+          <FontAwesomeIcon
+            icon={faEnvelope}
+            size="lg"
+            onClick={() => {
+              setMessage(true);
+              setShowNotification(false);
+              setShowBox(false);
+            }}
+          />
+        </Link>
+        <FontAwesomeIcon
+          icon={faBell}
+          size="lg"
+          onClick={() => {
+            setShowNotification(true);
+            setShowBox(false);
+            setMessage(false);
+          }}
+        />
+        <Link to="/newPost">
+          <FontAwesomeIcon icon={faPlus} size="lg" />
+        </Link>
+        <Link to="/userProfile">
+          <FontAwesomeIcon icon={faUser} size="lg" />
+        </Link>
+      </div>
       <motion.div
-        className="search-container flex-grow "
+        className="search-container flex-grow  z-50"
         initial={{ x: "100%" }}
         animate={{ x: showBox || showNotification || message ? 0 : "100%" }}
         transition={{ duration: 0.5 }}
@@ -317,7 +361,7 @@ const Navbar = () => {
       </motion.div>
 
       <motion.div
-        className="search-container flex-grow "
+        className="search-container flex-grow  z-50"
         initial={{ x: "100%" }}
         animate={{ x: showBox || showNotification || message ? 0 : "100%" }}
         transition={{ duration: 0.5 }}
@@ -326,7 +370,7 @@ const Navbar = () => {
       </motion.div>
 
       <motion.div
-        className="search-container flex-grow "
+        className="search-container flex-grow  z-50"
         initial={{ x: "100%" }}
         animate={{ x: showBox || showNotification || message ? 0 : "100%" }}
         transition={{ duration: 0.5 }}
