@@ -106,7 +106,7 @@ const ProfileBar = () => {
                   />
                 </div>
               </div>
-              <div className="w-full px-4 text-center mt-20">
+              <div className="w-full flex justify-center items-center px-4 text-center mt-20">
                 <div className="flex justify-evenly px-64 py-4 lg:pt-4 pt-8">
                   <div className="mr-4 p-3 text-center">
                     <span className="text-xl font-bold block uppercase tracking-wide ">
