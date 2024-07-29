@@ -35,6 +35,10 @@ const FriendUSerProfile = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [follower, setFollower] = useState<any>([]);
   const [following, setFollowing] = useState<any>([]);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [followerList, setFollowerList] = useState<any>([]);
+  const [followingList, setFollowingList] = useState<any>([]);
   useEffect(() => {
     axiosInstance.get(`/friendProfile/${username}`).then((res) => {
       console.log(res, "response is here for friend profile");
@@ -107,7 +111,6 @@ const FriendUSerProfile = () => {
   };
 
   const handleunfollow = async () => {
-    console.log(user?._id);
 
     const data = {
       userId: userDetails?._id,
@@ -126,6 +129,31 @@ const FriendUSerProfile = () => {
     } catch (error) {
       console.error("Error following user:", error);
     }
+  };
+
+
+  const showPopupFollower = async () => {
+    setShowFollowers(true);
+    await axiosInstance
+      .get(`/userFollowerlist/${user?._id}`)
+      .then((res) => {
+        console.log(res.data.data[0].follower, "follower list");
+        if (res.data?.data[0]?.follower) {
+          setFollowerList(res.data.data[0].follower);
+        }
+      });
+
+  };
+  const showPopupFollowing = async () => {
+    setShowFollowing(true);
+    await axiosInstance
+      .get(`/userFollowinglist/${user?._id}`)
+      .then((res) => {
+        console.log(res.data.data[0].following, "following list");
+        if (res.data?.data[0]?.following) {
+          setFollowingList(res.data.data[0].following);
+        }
+      });
   };
 
   // ...
@@ -157,13 +185,78 @@ const FriendUSerProfile = () => {
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                       {follower ? follower : "0"}
                     </span>
-                    <span className="text-sm text-blueGray-400">Followers</span>
+                    <span className="text-sm text-blueGray-400 cursor-pointer" onClick={showPopupFollower}>Followers</span>
+                    {showFollowers && (
+                      <div className=" shadow-md rounded-lg   overflow-y-auto">
+                        {/* Card content */}
+                        <div
+                          className="fixed top-0 left-0 right-0 bottom-0 "
+                          onClick={() => setShowFollowers(false)}
+                        ></div>
+                        <div className="p-4 h-[300px]  overflow-y-auto ">
+                          <h2 className="text-xl font-semibold text-gray-800">
+                            Followers
+                          </h2>
+                          <p>hello</p>
+                          {followerList.map((follower: any) => (
+                            <div className="border-gray-950  shadow-2xl p-3  justify-between flex  ">
+                              <img
+                                src={follower?.image}
+                                className="w-10 h-10 rounded-lg shadow-md"
+                                alt=""
+                              />
+                              <p className="text-sm  font-semibold">
+                                {follower.username}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className=" p-4">
+                          <p className="text-sm text-gray-500">
+                            My follower are my strength
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="lg:mr-4 p-3 text-center">
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                       {following ? following : "0"}
                     </span>
-                    <span className="text-sm text-blueGray-400">Following</span>
+                    <span className="text-sm text-blueGray-400 cursor-pointer" onClick={showPopupFollowing}>Following</span>
+                    {showFollowing && (
+                      <div className=" shadow-md rounded-lg overflow-y-auto">
+                        {/* Card content */}
+                        <div
+                          className="fixed top-0 left-0 right-0 bottom-0 z-10"
+                          onClick={() => setShowFollowing(false)}
+                        ></div>
+                        <div className="p-4">
+                          <h2 className="text-xl font-semibold ">
+                            Following
+                          </h2>
+                          {followingList.map((following: any) => (
+                            <div className="border-gray-950 shadow-2xl p-3 justify-between flex ">
+                              <img
+                                src={following?.image}
+                                className="w-10 h-10 rounded-lg shadow-md"
+                                alt=""
+                              />
+                              <p className="text-sm   font-semibold">
+                                {following.username}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className=" p-4">
+                          {/* Additional content */}
+
+                          <p className="text-sm text-gray-500">
+                            My followings are my beauty
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
