@@ -55,7 +55,7 @@ const AddPost = () => {
         <div className=" border-current shadow-lg rounded-md border-gray-200 w-full py-3 mt-2">
           <h1 className=" text-2xl font-semibold">Create Post</h1>
         </div>
-        <div className="flex-col flex items-center justify-between pt-10">
+        <div className="flex-col flex items-center justify-between pt-10 ">
           <div
             className="relative cursor-pointer shadow-xl rounded-md border-none overflow-hidden  w-[23.95rem] h-[13.6rem] mt-3"
             onClick={() => imgInput.current?.click()}
@@ -93,7 +93,7 @@ const AddPost = () => {
           </div>
           <button
             onClick={handleSubmit}
-            className="text-white font-semibold shadow-xl bg-blue-500 p-1 px-5 rounded-xl  hover:bg-gray-700 text-center cursor-pointer"
+            className="text-white font-semibold shadow-xl bg-blue-500 p-1 px-5 mb-10 rounded-xl  hover:bg-gray-700 text-center cursor-pointer"
           >
             Post
           </button>
