@@ -1,3 +1,4 @@
+import { format, isToday, isYesterday, subDays } from "date-fns";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import SearchUser from "./SearchUser";
@@ -5,6 +6,7 @@ import Navbar from "../Navbar/Navbar";
 import { io, Socket } from "socket.io-client";
 import { GetUsernameFromRedux } from "../../services/redux/UserinRedux";
 import { axiosInstance } from "../../services/userApi/axiosInstance";
+// import { formatDateLabel } from "./utils"; // Adjust the import path as needed
 
 const Chat = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -14,21 +16,30 @@ const Chat = () => {
   const socket = useRef<Socket | null>(null);
   const [users, setUsers] = useState<any[]>([]);
 
+  const formatDateLabel = (dateString:any) => {
+    const date = new Date(dateString);
+    if (isToday(date)) {
+      return "Today";
+    } else if (isYesterday(date)) {
+      return "Yesterday";
+    } else if (date >= subDays(new Date(), 2)) {
+      return "Day before Yesterday";
+    } else {
+      return format(date, "MMMM dd, yyyy");
+    }
+  };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axiosInstance.get("/getAlluser");
-        console.log(response?.data, "users is here");
         if (Array.isArray(response?.data)) {
           const Allusers = response.data;
-          const Alluser = Allusers.filter(
-            (user: any) => user._id === userId
-          );
-          console.log(Alluser, Allusers, "These are users");
-
+          const Alluser = Allusers.filter((user: any) => user._id === userId);
           setUsers(Alluser);
         }
-      } catch (error) { }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     };
     fetchUserData();
   }, [userId]);
@@ -39,8 +50,6 @@ const Chat = () => {
         const response = await axiosInstance.get(
           `/get/chat/msg/${userDetails?._id}/${userId}`
         );
-        console.log({ response });
-
         if (Array.isArray(response?.data)) {
           setMessages(response.data);
         }
@@ -63,62 +72,76 @@ const Chat = () => {
     });
 
     if (userDetails?._id) {
-      console.log(`Joining chat room: ${userId}`);
       socket.current.emit("joinChat", { userId: userDetails?._id });
     }
 
     socket.current.on("receive_message", (message) => {
-      console.log("Received message:", message);
-      setMessages((prevMessages) => [...prevMessages, { myself: false, message: message.content }]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { myself: false, message: message.content, timestamp: message.timestamp },
+      ]);
     });
 
-    // Listen for any errors
     socket.current.on("error", (error) => {
       console.error("Socket error:", error);
     });
 
     return () => {
       socket.current?.disconnect();
-      console.log("Disconnected from socket server");
     };
   }, [userId, userDetails]);
 
   const sendMessage = useCallback(async () => {
     if (currentMessage.trim() !== "" && socket.current) {
+      const timestamp = new Date().toISOString();
       const message = {
         userId,
         sender: userDetails?._id,
         content: currentMessage,
+        timestamp,
       };
 
-      console.log("Sending message:", message);
       socket.current.emit("send_message", message);
-      const sendMessage = await axiosInstance.post("/msg", {
+
+      await axiosInstance.post("/msg", {
         from: userDetails?._id,
         to: userId,
         message: currentMessage,
+        timestamp,
       });
+
       setMessages((prevMessages) => [
         ...prevMessages,
-        { myself: true, message: currentMessage },
-      ]); // Add the message to local state
-      setCurrentMessage(""); // Clear the input field after sending
+        { myself: true, message: currentMessage, timestamp },
+      ]);
+      setCurrentMessage("");
     }
   }, [currentMessage, userId, userDetails]);
 
+  // Group messages by date
+  const groupedMessages = messages.reduce((groups, message) => {
+    const dateLabel = formatDateLabel(message.timestamp);
+    if (!groups[dateLabel]) {
+      groups[dateLabel] = [];
+    }
+    groups[dateLabel].push(message);
+    return groups;
+  }, {});
+
+ 
   return (
     <div className="h-screen w-full flex relative">
-      <div className="border-l-2  border border-opacity-75 w-1/4 ml-4 my-4  sticky">
+      <div className="hidden lg:block border-l-2 border border-opacity-75 lg:w-1/4 ml-4 my-4 sticky">
         <Navbar />
       </div>
 
-      {/* <div className="w-1.5/4 rounded-3xl border mr-4 my-4  border-opacity-75">
+      <div className=" hidden lg:block lg:w-1/4 border mr-4 my-4 border-opacity-75">
         <SearchUser />
-      </div> */}
+      </div>
 
-      <div className="w-3/4  rounded-3xl border mr-4 my-4 border-opacity-75 border-l-2">
-        <div className="h-full  flex flex-col">
-          <div className="h-16 mt-2 mx-2  border rounded-xl flex flex-row items-center  gap-x-4 bg-gray-400">
+      <div className=" w-full lg:w-4/5 border mr-4 my-4 border-opacity-75 border-l-2">
+        <div className="h-full flex flex-col">
+          <div className="h-16 mt-2 mx-2 border rounded-xl flex flex-row items-center gap-x-4 bg-gray-400">
             <div>
               <img
                 src={users[0]?.image}
@@ -131,17 +154,27 @@ const Chat = () => {
             </div>
           </div>
 
-          <div className="chat-container flex flex-col justify-between h-full pb-14 ">
-            <div className="messages flex flex-col w-full  overflow-y-auto p-4 space-y-4">
-              {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`message max-w-xs p-2 rounded-lg ${msg.myself
-                    ? "bg-blue-500 self-end text-white text-left"
-                    : "bg-gray-300 self-start text-left"
-                    }`}
-                >
-                  <p>{msg.message}</p>
+          <div className="chat-container flex flex-col justify-between h-full pb-14">
+            <div className="messages flex flex-col w-full overflow-y-auto p-4 space-y-4">
+              {Object.keys(groupedMessages).map((dateLabel) => (
+                <div key={dateLabel} className=" flex flex-col ">
+                  <div className="date-label text-center text-gray-500 mb-2">
+                    {dateLabel}
+                  </div>
+                  {groupedMessages[dateLabel].map((msg:any, index:any) => (
+                    <div
+                      key={index}
+                      className={`message m-2  max-w-xs p-2 rounded-lg  ${msg.myself
+                        ? "bg-blue-500 self-end text-white text-left "
+                        : "bg-gray-300 self-start text-left "
+                        }`}
+                    >
+                      <p>{msg.message}</p>
+                      <span className="text-xs text-gray-600">
+                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>

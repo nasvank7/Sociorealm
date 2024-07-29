@@ -11,10 +11,14 @@ const Chat = () => {
         <Navbar />
       </div>
 
-      {/* <div className="w-1.5/4 rounded-3xl shadow-md   border-opacity-75  ">
-        <SearchUser />
-      </div> */}
-      <div className="w-full lg:w-4/5   mr-4 my-4  border-opacity-75 overflow-y-auto scrollbar-hidden">
+      <div className="hidden lg:block w-1/4  shadow-md   border-opacity-75  ">
+      <SearchUser />
+      
+      </div>
+      <div className="w-full h-full lg:w-4/5 flex flex-col justify-center items-center  mr-4 my-4  border-opacity-75 overflow-y-auto scrollbar-hidden">
+        <div className="lg:hidden w-full flex ">
+         <SearchUser />
+        </div>
         <span className="">
           <TbMessages size={50} className="border rounded-2xl border-black" />
         </span>

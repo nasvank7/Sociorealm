@@ -34,10 +34,13 @@ const messageController = {
                     $all: [from, to]
                 }
             }).sort({ updatedAt: 1 })
+            console.log({newMessage});
+            
             const allMessage = newMessage.map((msg) => {
                 return {
                     myself: msg.Sender.toString() === from,
-                    message: msg.message
+                    message: msg.message,
+                    timestamp:msg.createdAt
                 }
             })
             console.log(allMessage, "the chatr messages");
