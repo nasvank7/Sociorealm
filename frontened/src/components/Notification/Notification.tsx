@@ -90,7 +90,7 @@ const Notification: React.FC<showProps> = ({ show }) => {
         className="fixed top-0 left-0 right-0 bottom-0 "
         onClick={() => show(false)}
       ></div> */}
-      <div className="h-full w-[17rem] bg-gray-900 py-4  shadow-2xl border-l-4   border-r-4   border-zinc-950 rounded-lg  z-20 overflow-y-auto">
+      <div className="h-full w-[17rem] bg-gray-900 py-4  shadow-2xl border-l-4   border-r-4   border-zinc-950 rounded-lg   overflow-y-auto absolute z-auto">
         <div className="flex justify-center w-ful">
           <h1 className="text-white">Notifications</h1>
         </div>
