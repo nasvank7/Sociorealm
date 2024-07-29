@@ -29,7 +29,7 @@ const Explores = () => {
   }, []);
 
   return (
-    <div className="grid lg:grid-cols-4 grid-cols-4 p-4">
+    <div className="grid lg:grid-cols-4 grid-cols-4 p-4 overflow-y-auto">
       {posts?.map((post) => (
         <motion.div
           key={post._id}
@@ -43,7 +43,7 @@ const Explores = () => {
           <motion.img
             src={post.image}
             alt=""
-            className="w-[250px] h-[400px] object-contain "
+            className="h-full object-contain "
             initial={{ filter: "blur(0px)" }}
             whileHover={{ filter: "blur(4px)" }}
             transition={{ duration: 0.3 }}
