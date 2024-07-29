@@ -21,20 +21,20 @@ const Search: React.FC<ShowProps> = ({ show }) => {
 
   const filteredUser = searchTerm
     ? searchUser.filter((user) =>
-        user.username?.toLowerCase()?.includes(searchTerm.trim()?.toLowerCase())
-      )
+      user.username?.toLowerCase()?.includes(searchTerm.trim()?.toLowerCase())
+    )
     : [];
-    const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      // Prevent closing if clicked inside the search container
-      if (!e.currentTarget.contains(e.target as Node)) {
-        show(false);
-      }
-    };
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Prevent closing if clicked inside the search container
+    if (!e.currentTarget.contains(e.target as Node)) {
+      show(false);
+    }
+  };
 
   return (
     <>
       {/* <div className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-gray-900 bg-opacity-70" onClick={handleOverlayClick}></div> */}
-      <div className="container w-full h-full max-w-md mx-auto  rounded-lg bg-gray-900 text-white shadow-lg z-50">
+      <div className="container w-full h-full max-w-md mx-auto  rounded-lg bg-gray-900 text-white shadow-lg  ">
         <div className="flex items-center justify-between px-4 py-2 border-b border-gray-800">
           <span className="cursor-pointer" onClick={() => show(false)}>
             <IoArrowBackCircle size={35} />
